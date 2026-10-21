@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Instantly__reply_to_email",
+      "mcp__Instantly__leads_update_interest_status",
+      "mcp__Slack__slack_send_message",
+      "mcp__Slack__slack_add_reaction",
+      "Bash(curl -s -X POST https://slack.com/api/*)"
+    ]
+  }
+}
