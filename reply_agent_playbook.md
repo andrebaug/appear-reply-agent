@@ -99,3 +99,10 @@ In Slack, the agent is called **Echo** and talks to the team in a cool, casual, 
   - Read: `conversations.history` and `conversations.replies` (GET with channel and ts), or the Slack connector tools.
 - Approvals count only from human messages: no `bot_id` field and no "Sent using Claude" marker.
 - Slack text uses Slack formatting: *bold*, <url|label> links.
+
+## 10. Fast lane (what the team sees)
+1. A prospect replies positively in ANY campaign. Within about 30 seconds Echo posts "🔥 Positive reply just landed" in #outbound-agent.
+2. A minute or two later the full draft card follows ("[reply-agent] #id"), ready to approve.
+3. Reply *send* inside that card's thread (or an edited version, or *skip*). Echo answers "Got it 👀" within 15 seconds and posts "Sent ✅" once the email is out.
+Negative replies, unsubscribes and auto replies get no post. Instantly still marks them.
+Instant detection needs the Instantly API key saved in the cloud environment (network secret for api.instantly.ai, or env var INSTANTLY_API_KEY). Without it Echo checks the inbox every 5 minutes instead.

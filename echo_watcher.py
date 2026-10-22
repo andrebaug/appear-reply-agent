@@ -8,13 +8,20 @@ up and sends. Stateless: a post is pending when it has no white_check_mark or
 track_next reaction and the newest human message in its thread is newer than
 Echo's newest message there.
 
-During business hours (Mon to Fri, 8am to 6pm Central) it also exits every
-INBOX_TICK seconds with "tick" so the agent checks Instantly for new replies.
+It also watches Instantly for new POSITIVE replies (Instantly's interest label,
+any campaign) every INBOX_POLL seconds. On a hit Echo posts a heads up in Slack
+right away and the script exits with {"action": "new_positive", ...} so the
+agent drafts the reply. Negative and auto replies are ignored. This needs the
+Instantly API to answer: an API key in INSTANTLY_API_KEY or a network secret
+for api.instantly.ai. Without it, the script falls back to exiting every
+INBOX_TICK seconds during business hours with "tick" so the agent checks the
+inbox itself.
 
-Exit codes: 0 = approval found (details on stdout), 3 = tick or ran out of
+Exit codes: 0 = something to act on (JSON on stdout), 3 = tick or ran out of
 time: check the inbox if "tick", then re-arm.
 """
 import json
+import os
 import re
 import subprocess
 import sys
@@ -27,6 +34,9 @@ ECHO_USER = "U0CB7334HT6"
 POLL = 15
 MAX_RUNTIME = 105 * 60
 INBOX_TICK = 5 * 60
+INBOX_POLL = 30
+INBOX_WINDOW = 6 * 3600
+INSTANTLY = "https://api.instantly.ai/api/v2/emails"
 LOOKBACK = 3 * 24 * 3600
 DONE_REACTIONS = {"white_check_mark", "track_next", "black_right_pointing_double_triangle_with_vertical_bar"}
 APPROVE = re.compile(r"\b(send|sent it|yes|yep|ok|okay|go|approved?|ship it)\b|:\+1:|:thumbsup:|👍", re.I)
@@ -108,6 +118,51 @@ def nudge_top_level(messages, posts):
     return None
 
 
+def instantly_received():
+    """Newest received emails, or None when the API is not authorized."""
+    cmd = ["curl", "-s", "-w", "\n%{http_code}", f"{INSTANTLY}?email_type=received&limit=50"]
+    if os.environ.get("INSTANTLY_API_KEY"):
+        cmd += ["-H", f"Authorization: Bearer {os.environ['INSTANTLY_API_KEY']}"]
+    out = subprocess.run(cmd, capture_output=True, text=True, timeout=30).stdout
+    body, _, code = out.rpartition("\n")
+    if code != "200":
+        return None
+    try:
+        return json.loads(body).get("items", [])
+    except ValueError:
+        return []
+
+
+def is_positive(e):
+    return (e.get("ai_interest_value") or 0) >= 1 or e.get("i_status") in (1, 2)
+
+
+def check_inbox(channel_text, seen):
+    emails = instantly_received()
+    if emails is None:
+        return None, False
+    cutoff = time.time() - INBOX_WINDOW
+    for e in emails:
+        eid = e.get("id", "")
+        created = datetime.fromisoformat(e.get("timestamp_created", "1970-01-01T00:00:00Z").replace("Z", "+00:00"))
+        if eid in seen or eid in channel_text or created.timestamp() < cutoff or not is_positive(e):
+            continue
+        seen.add(eid)
+        sender = (e.get("from_address_json") or [{}])[0]
+        who = sender.get("name") or e.get("from_address_email")
+        rank = "rankcollective" in e.get("eaccount", "")
+        note = ":rotating_light: *needs you*, came into a TRC inbox, I won't reply from it" if rank \
+            else "drafting the reply now :pencil2:"
+        slack("chat.postMessage", body={"channel": CHANNEL, "text":
+              f":fire: *Positive reply just landed* from {who} <mailto:{e.get('from_address_email')}|"
+              f"{e.get('from_address_email')}>: \"{e.get('content_preview', '')[:120].strip()}\" ({note})\n"
+              f"[incoming] #{eid}"})
+        return {"action": "new_positive", "email_id": eid, "eaccount": e.get("eaccount"),
+                "from": e.get("from_address_email"), "campaign_id": e.get("campaign_id"),
+                "subject": e.get("subject"), "rankcollective": rank}, True
+    return None, True
+
+
 def business_hours():
     now = datetime.now(ZoneInfo("America/Chicago"))
     return now.weekday() < 5 and 8 <= now.hour < 18
@@ -115,13 +170,23 @@ def business_hours():
 
 def main():
     start = time.time()
+    api_ok = True
+    last_inbox = 0.0
+    seen = set()
     while time.time() - start < MAX_RUNTIME:
-        if business_hours() and time.time() - start >= INBOX_TICK:
+        if not api_ok and business_hours() and time.time() - start >= INBOX_TICK:
             print("tick")
             return 3
-        hist = slack("conversations.history", {"channel": CHANNEL, "limit": 100,
+        hist = slack("conversations.history", {"channel": CHANNEL, "limit": 200,
                                                "oldest": f"{time.time() - LOOKBACK:.0f}"})
         messages = hist.get("messages", [])
+        if api_ok and time.time() - last_inbox >= INBOX_POLL:
+            last_inbox = time.time()
+            channel_text = " ".join(m.get("text", "") for m in messages)
+            hit, api_ok = check_inbox(channel_text, seen)
+            if hit:
+                print(json.dumps(hit))
+                return 0
         posts = [m for m in messages if "[reply-agent] #" in m.get("text", "")]
         for post in posts:
             hit = check_post(post)
