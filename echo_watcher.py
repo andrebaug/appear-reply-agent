@@ -103,14 +103,6 @@ def nudge_top_level(messages, posts):
             continue
         if now - float(m["ts"]) > 1800 or classify(m.get("text", "")) == "edit":
             continue
-        open_posts = [p for p in posts if not any(r["name"] in DONE_REACTIONS for r in p.get("reactions", []))]
-        if len(open_posts) == 1:
-            say(m["ts"], "Got it :eyes: I'll treat this as the answer for the draft above, "
-                         "next time reply inside the draft's thread so I can't mix them up.")
-            return {"post_ts": open_posts[0]["ts"],
-                    "email_id": re.search(r"#([0-9a-f-]+)", open_posts[0]["text"]).group(1),
-                    "action": classify(m["text"]), "by": m.get("user"), "text": m["text"],
-                    "note": "approval typed in the main channel"}
         say(m["ts"], "Got it :eyes: which draft do you mean? Reply *send* inside that draft's thread "
                      "and I'll fire it off right away.")
     return None
