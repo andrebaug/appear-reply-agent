@@ -80,6 +80,8 @@ On each run, the agent first checks threads under its own "[reply-agent]" posts 
 - If the reply proposed a booking (bucket C) and Grischa approves, also create the appointment in GoHighLevel calendar oHrxmHKnqtotBqoJCMoY and confirm in the thread.
 - No answer yet → leave it.
 
+**Instant approvals:** `echo_watcher.py` polls the channel every 15 seconds. The moment someone answers in a draft's thread (or puts 👍 on the post), Echo replies "Got it 👀 sending now", the agent sends the email straight away and then confirms with "Sent ✅" in the same thread. Always answer inside the draft's thread; a "send" typed in the main channel gets a nudge asking which draft it belongs to (or is applied to the only open draft). Posts with nothing to send (bucket E/F) get ⏭️ so the watcher ignores them. The hourly run restarts the watcher if it is not running.
+
 ## 7. Schedule
 Runs every hour, Monday to Friday, 8am to 6pm Central.
 
