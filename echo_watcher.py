@@ -8,18 +8,25 @@ up and sends. Stateless: a post is pending when it has no white_check_mark or
 track_next reaction and the newest human message in its thread is newer than
 Echo's newest message there.
 
-Exit codes: 0 = approval found (details on stdout), 3 = ran out of time, re-arm.
+During business hours (Mon to Fri, 8am to 6pm Central) it also exits every
+INBOX_TICK seconds with "tick" so the agent checks Instantly for new replies.
+
+Exit codes: 0 = approval found (details on stdout), 3 = tick or ran out of
+time: check the inbox if "tick", then re-arm.
 """
 import json
 import re
 import subprocess
 import sys
 import time
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 CHANNEL = "C0CB71LLLS0"
 ECHO_USER = "U0CB7334HT6"
 POLL = 15
 MAX_RUNTIME = 105 * 60
+INBOX_TICK = 5 * 60
 LOOKBACK = 3 * 24 * 3600
 DONE_REACTIONS = {"white_check_mark", "track_next", "black_right_pointing_double_triangle_with_vertical_bar"}
 APPROVE = re.compile(r"\b(send|sent it|yes|yep|ok|okay|go|approved?|ship it)\b|:\+1:|:thumbsup:|👍", re.I)
@@ -109,9 +116,17 @@ def nudge_top_level(messages, posts):
     return None
 
 
+def business_hours():
+    now = datetime.now(ZoneInfo("America/Chicago"))
+    return now.weekday() < 5 and 8 <= now.hour < 18
+
+
 def main():
     start = time.time()
     while time.time() - start < MAX_RUNTIME:
+        if business_hours() and time.time() - start >= INBOX_TICK:
+            print("tick")
+            return 3
         hist = slack("conversations.history", {"channel": CHANNEL, "limit": 100,
                                                "oldest": f"{time.time() - LOOKBACK:.0f}"})
         messages = hist.get("messages", [])
