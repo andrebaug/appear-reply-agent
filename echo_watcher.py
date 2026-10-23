@@ -113,8 +113,8 @@ def nudge_top_level(messages, posts):
             continue
         if now - float(m["ts"]) > 1800 or classify(m.get("text", "")) == "edit":
             continue
-        say(m["ts"], "Got it :eyes: which draft do you mean? Reply *send* inside that draft's thread "
-                     "and I'll fire it off right away.")
+        say(m["ts"], "Got it :eyes: which draft do you mean? Reply *send* or *skip* inside that draft's "
+                     "thread and I'll act on it right away.")
     return None
 
 
