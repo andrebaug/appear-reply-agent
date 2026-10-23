@@ -134,6 +134,8 @@ def instantly_received():
 
 
 def is_positive(e):
+    if e.get("is_auto_reply") or re.match(r"(Accepted|Declined|Tentative|Invitation|Updated invitation):", e.get("subject", "")):
+        return False
     return (e.get("ai_interest_value") or 0) >= 1 or e.get("i_status") in (1, 2)
 
 
