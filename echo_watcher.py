@@ -41,6 +41,8 @@ LOOKBACK = 3 * 24 * 3600
 DONE_REACTIONS = {"white_check_mark", "track_next", "black_right_pointing_double_triangle_with_vertical_bar"}
 APPROVE = re.compile(r"\b(send|sent it|yes|yep|ok|okay|go|approved?|ship it)\b|:\+1:|:thumbsup:|👍", re.I)
 SKIP = re.compile(r"\bskip\b", re.I)
+ACK = re.compile(r"^\W*(nice|thanks?|thank you|thx|ty|cool|great|perfect|awesome|got it|ok|okay|k|sounds good|love it|"
+                 r"amazing|sweet|\+1|:\+1:|:thumbsup:|:raised_hands:|:fire:|👍|🙌|🔥)\W*$", re.I)
 
 
 def slack(method, params=None, body=None):
@@ -137,6 +139,10 @@ def check_threads(messages):
         if len(thread) < 2 or not is_human(thread[-1]):
             continue
         last = thread[-1]
+        if ACK.match(last.get("text", "").strip()):
+            if not any(r["name"] == "+1" for r in last.get("reactions", [])):
+                slack("reactions.add", body={"channel": CHANNEL, "timestamp": last["ts"], "name": "+1"})
+            continue
         say(m["ts"], "Got it :eyes: on it, give me a minute.")
         return {"action": "question", "post_ts": m["ts"], "by": last.get("user"), "text": last.get("text", "")}
     return None
