@@ -124,6 +124,26 @@ def nudge_top_level(messages, posts):
     return None
 
 
+def check_threads(messages):
+    """A teammate replied inside a thread that is not a draft card (e.g. a follow up question
+    under a main channel message). If the newest message there is human, confirm and wake."""
+    now = time.time()
+    for m in messages:
+        if "[reply-agent] #" in m.get("text", "") or not m.get("reply_count"):
+            continue
+        if now - float(m.get("latest_reply", "0")) > 1800:
+            continue
+        thread = slack("conversations.replies", {"channel": CHANNEL, "ts": m["ts"], "limit": 200}).get("messages", [])
+        if len(thread) < 2 or not is_human(thread[-1]):
+            continue
+        last = thread[-1]
+        if classify(last.get("text", "")) != "edit":
+            continue
+        say(m["ts"], "Got it :eyes: on it, give me a minute.")
+        return {"action": "question", "post_ts": m["ts"], "by": last.get("user"), "text": last.get("text", "")}
+    return None
+
+
 def instantly_received():
     """Newest received emails, or None when the API is not authorized."""
     cmd = ["curl", "-s", "-w", "\n%{http_code}", f"{INSTANTLY}?email_type=received&limit=50"]
@@ -202,7 +222,7 @@ def main():
             if hit:
                 print(json.dumps(hit))
                 return 0
-        hit = nudge_top_level(messages, posts)
+        hit = check_threads(messages) or nudge_top_level(messages, posts)
         if hit:
             print(json.dumps(hit))
             return 0
