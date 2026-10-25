@@ -14,7 +14,7 @@ right away and the script exits with {"action": "new_positive", ...} so the
 agent drafts the reply. Negative and auto replies are ignored. This needs the
 Instantly API to answer: an API key in INSTANTLY_API_KEY or a network secret
 for api.instantly.ai. Without it, the script falls back to exiting every
-INBOX_TICK seconds during business hours with "tick" so the agent checks the
+INBOX_TICK seconds (7am to 9pm Central, every day) with "tick" so the agent checks the
 inbox itself.
 
 Exit codes: 0 = something to act on (JSON on stdout), 3 = tick or ran out of
@@ -106,15 +106,21 @@ def check_post(post):
 
 
 def nudge_top_level(messages, posts):
-    """A send typed in the main channel instead of a thread: ask once where it belongs."""
+    """A human message in the main channel. A bare send/skip gets a nudge to use the draft's
+    thread (never applied on a guess). Anything else is a question or request for Echo: confirm
+    right away and wake the agent to handle it."""
     now = time.time()
     for m in messages:
         if not is_human(m) or "[reply-agent]" in m.get("text", "") or m.get("reply_count"):
             continue
-        if now - float(m["ts"]) > 1800 or classify(m.get("text", "")) == "edit":
+        if now - float(m["ts"]) > 1800:
             continue
-        say(m["ts"], "Got it :eyes: which draft do you mean? Reply *send* or *skip* inside that draft's "
-                     "thread and I'll act on it right away.")
+        if classify(m.get("text", "")) != "edit":
+            say(m["ts"], "Got it :eyes: which draft do you mean? Reply *send* or *skip* inside that draft's "
+                         "thread and I'll act on it right away.")
+            continue
+        say(m["ts"], "Got it :eyes: on it, give me a minute.")
+        return {"action": "question", "post_ts": m["ts"], "by": m.get("user"), "text": m.get("text", "")}
     return None
 
 
@@ -166,8 +172,9 @@ def check_inbox(channel_text, seen):
 
 
 def business_hours():
+    """7 days a week, 7am to 9pm Central: replies come in on weekends too."""
     now = datetime.now(ZoneInfo("America/Chicago"))
-    return now.weekday() < 5 and 8 <= now.hour < 18
+    return 7 <= now.hour < 21
 
 
 def main():

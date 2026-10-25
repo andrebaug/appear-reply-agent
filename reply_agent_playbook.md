@@ -83,7 +83,7 @@ On each run, the agent first checks threads under its own "[reply-agent]" posts 
 **Instant approvals:** `echo_watcher.py` polls the channel every 15 seconds. The moment someone answers in a draft's thread (or puts 👍 on the post), Echo replies "Got it 👀 sending now", the agent sends the email straight away and then confirms with "Sent ✅" in the same thread. Always answer inside the draft's thread; a "send" typed in the main channel only gets a nudge asking which draft it belongs to, it is never applied on a guess. Posts with nothing to send (bucket E/F) get ⏭️ so the watcher ignores them. The hourly run restarts the watcher if it is not running.
 
 ## 7. Schedule
-Runs every hour, Monday to Friday, 8am to 6pm Central.
+Runs every hour, 7 days a week, 7am to 9pm Central (replies come in on weekends too). Any human message in the channel that is not a send or skip gets an instant "Got it" and an answer.
 
 ## 8. Echo's Slack personality (team only)
 In Slack, the agent is called **Echo** and talks to the team in a cool, casual, upbeat voice: short lines like "Yo team 👋", "Heads up, hot one just landed 🔥", "Boom, meeting booked 🎉", "Quiet hour, nothing new 😎".
