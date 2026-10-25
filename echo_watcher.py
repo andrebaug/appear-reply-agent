@@ -137,8 +137,6 @@ def check_threads(messages):
         if len(thread) < 2 or not is_human(thread[-1]):
             continue
         last = thread[-1]
-        if classify(last.get("text", "")) != "edit":
-            continue
         say(m["ts"], "Got it :eyes: on it, give me a minute.")
         return {"action": "question", "post_ts": m["ts"], "by": last.get("user"), "text": last.get("text", "")}
     return None
