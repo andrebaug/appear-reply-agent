@@ -67,7 +67,7 @@ const CONCEPTS = {
       <div class="h" style="--hs:${s === 'square' ? 88 : s === 'story' ? 84 : 92}px;color:var(--ink);text-shadow:none">Get recommended by AI.<br><span style="color:var(--green)">Then relax.</span></div>
       ${`${gap(26)}<div class="lead" style="text-shadow:none;color:#3d3d3a;max-width:22em">More customers find you through ChatGPT, Claude and Perplexity. You don't lift a finger.</div>`}
       <div style="flex:1"></div>
-      <div style="flex:none;position:relative;border-radius:calc(var(--k)*36px);overflow:hidden;padding:calc(var(--k)*30px);background:url(${A}/grass_feed.jpg) center/cover">
+      <div style="flex:none;position:relative;border-radius:calc(var(--k)*36px);overflow:hidden;padding:calc(var(--k)*30px);background:url(${A}/grass_sq4k.jpg) center/cover">
         <div style="display:flex;flex-direction:column;gap:calc(var(--k)*14px);position:relative">
           ${[
             [icons.gpt, 'ChatGPT', `My top pick is <span class="you">Your Business</span>.`],
@@ -93,13 +93,13 @@ const CONCEPTS = {
     for (const [sk, sz] of Object.entries(SIZES)) {
       const bg = c.light
         ? `<div class="grid-bg"></div>`
-        : `<div style="position:absolute;inset:0;background:url(${A}/${sk === 'story' && c.bgStory ? c.bgStory : c.bg}) ${c.bgpos || 'center'}/cover"></div><div class="shade-top"></div>`;
+        : `<div style="position:absolute;inset:0;background:url(${A}/${sk === 'square' ? 'grass_sq4k.jpg' : 'grass_story4k.jpg'}) ${c.bgpos || 'center'}/cover"></div><div class="shade-top"></div>`;
       const html = `<!doctype html><html><head><meta charset="utf-8"><style>${CSS}</style></head>
       <body style="--w:${sz.w}px;--h:${sz.h}px;--k:${sz.k}"><div style="position:relative;width:${sz.w}px;height:${sz.h}px;overflow:hidden">${bg}
       <div style="position:absolute;inset:0;padding:${sz.pad};display:flex;flex-direction:column">${c.html(sk)}</div></div></body></html>`;
       const file = path.join(__dirname, `_${id}_${sk}.html`);
       fs.writeFileSync(file, html);
-      const page = await browser.newPage({ viewport: { width: sz.w, height: sz.h } });
+      const page = await browser.newPage({ viewport: { width: sz.w, height: sz.h }, deviceScaleFactor: 2 });
       await page.goto('file://' + file);
       await page.evaluate(() => document.fonts.ready);
       await page.waitForTimeout(200);

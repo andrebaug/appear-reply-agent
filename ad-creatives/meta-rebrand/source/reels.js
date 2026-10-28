@@ -196,7 +196,7 @@ const REELS = {
     <script>${RUNTIME}${r.script}</script></body></html>`;
     const file = path.join(__dirname, `_${id}.html`);
     fs.writeFileSync(file, html);
-    const page = await browser.newPage({ viewport: { width: W, height: H } });
+    const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });
     page.on('pageerror', (e) => console.log('PAGE ERROR', e.message));
     await page.goto('file://' + file);
     await page.evaluate(() => document.fonts.ready);
@@ -211,8 +211,8 @@ const REELS = {
     execFileSync('ffmpeg', ['-v', 'error', '-y',
       '-i', path.join(A, r.video), '-framerate', String(FPS), '-i', path.join(dir, 'f%04d.png'),
       '-filter_complex',
-      `[0:v]split[a][b];[b]reverse[r];[a][r]concat=n=2:v=1[bb];[bb]setpts=1.15*PTS,fps=${FPS},scale=${W}:${H},trim=duration=${r.dur},eq=saturation=1.08[bg];[bg][1:v]overlay=0:0:format=auto,format=yuv420p[v]`,
-      '-map', '[v]', '-t', String(r.dur), '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-movflags', '+faststart', out]);
+      `[0:v]split[a][b];[b]reverse[r];[a][r]concat=n=2:v=1[bb];[bb]setpts=1.15*PTS,fps=${FPS},scale=${W * 2}:${H * 2}:flags=lanczos,trim=duration=${r.dur},eq=saturation=1.08[bg];[bg][1:v]overlay=0:0:format=auto,format=yuv420p[v]`,
+      '-map', '[v]', '-t', String(r.dur), '-c:v', 'libx264', '-preset', 'medium', '-crf', '16', '-profile:v', 'high', '-r', String(FPS), '-movflags', '+faststart', out]);
     // poster frames for review
     for (const s of [1.5, 5.2, 8, 11.2, 14.5]) {
       execFileSync('ffmpeg', ['-v', 'error', '-y', '-ss', String(s), '-i', out, '-frames:v', '1', '-vf', 'scale=360:-1', path.join(__dirname, `_poster_${id}_${s}.jpg`)]);

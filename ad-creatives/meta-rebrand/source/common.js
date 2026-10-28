@@ -6,7 +6,7 @@ const ASSETS = path.join(__dirname, '..', 'assets');
 const fontCss = fs.readFileSync(path.join(ASSETS, 'fonts-v2.css'), 'utf8').replace(/assets\//g, ASSETS + '/');
 
 // Approximation of the new stacked mark; swap for the real SVG when available.
-const mark = (fill = '#0a0a0a') => `<svg viewBox="0 0 40 30" class="mark"><path d="M3 15.5C3 7.5 10 2 20 2s17 5.5 17 13.5c0 1.4-1.1 2.5-2.5 2.5h-29C4.1 18 3 16.9 3 15.5z" fill="${fill}"/><rect x="3" y="20.5" width="34" height="7.5" rx="3.75" fill="${fill}"/></svg>`;
+const mark = () => `<img class="mark" src="${ASSETS}/logo.png" alt="">`;
 
 const icons = {
   check: `<svg viewBox="0 0 24 24" width="1em" height="1em"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -26,7 +26,7 @@ ${fontCss}
 html,body{width:var(--w);height:var(--h);overflow:hidden;background:transparent}
 body{font-family:'Inter Tight',sans-serif;-webkit-font-smoothing:antialiased;color:#fff}
 .mono{font-family:'Geist Mono',monospace}
-.mark{width:calc(var(--k)*46px);height:auto;display:block}
+.mark{width:calc(var(--k)*58px);height:calc(var(--k)*58px);object-fit:contain;display:block;margin:calc(var(--k)*-6px) 0}
 .navpill{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:999px;padding:calc(var(--k)*14px) calc(var(--k)*14px) calc(var(--k)*14px) calc(var(--k)*30px);box-shadow:0 10px 40px rgba(0,40,0,.18)}
 .logo{display:flex;align-items:center;gap:calc(var(--k)*10px);color:var(--ink);font-size:calc(var(--k)*38px);font-weight:400;letter-spacing:-.03em}
 .btn{display:inline-flex;align-items:center;gap:calc(var(--k)*14px);background:var(--ink);color:#fff;font-family:'Geist Mono',monospace;font-weight:500;font-size:calc(var(--k)*26px);padding:calc(var(--k)*22px) calc(var(--k)*34px);border-radius:999px;letter-spacing:-.01em;white-space:nowrap}
@@ -48,8 +48,8 @@ body{font-family:'Inter Tight',sans-serif;-webkit-font-smoothing:antialiased;col
 .src i{width:calc(var(--k)*30px);height:calc(var(--k)*30px);border-radius:50%;background:var(--ink);display:grid;place-items:center}
 .src i svg{width:62%}
 .notif{display:flex;gap:calc(var(--k)*20px);align-items:center;background:rgba(255,255,255,.94);color:var(--ink);border-radius:calc(var(--k)*30px);padding:calc(var(--k)*24px) calc(var(--k)*26px);box-shadow:0 20px 60px rgba(0,50,0,.25);backdrop-filter:blur(20px)}
-.notif .app{width:calc(var(--k)*76px);height:calc(var(--k)*76px);border-radius:calc(var(--k)*20px);background:var(--ink);display:grid;place-items:center;flex:none}
-.notif .app .mark{width:58%}
+.notif .app{width:calc(var(--k)*76px);height:calc(var(--k)*76px);border-radius:calc(var(--k)*20px);background:#fff;border:1.5px solid var(--line);display:grid;place-items:center;flex:none}
+.notif .app .mark{width:78%;height:78%;margin:0}
 .notif .app.green{background:#34c759;color:#fff;font-size:calc(var(--k)*38px)}
 .notif .t{font-weight:600;font-size:calc(var(--k)*27px);letter-spacing:-.015em}
 .notif .b{font-size:calc(var(--k)*25px);color:#3d3d3a;margin-top:2px;letter-spacing:-.01em;line-height:1.3}
