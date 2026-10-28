@@ -20,7 +20,7 @@ body{background:var(--bg);color:var(--fg)}
 
 .stage{position:absolute;inset:0;display:flex;flex-direction:column}
 .sq .stage{padding:76px 84px 80px}
-.st .stage{padding:250px 84px 340px}
+.st .stage{padding:300px 84px 690px}
 .top{display:flex;justify-content:space-between;align-items:center;flex:none}
 .logo{height:34px;display:block}
 .st .logo{height:44px}
@@ -71,7 +71,7 @@ h1 i{color:var(--acc)}
 .st .fine{left:0;right:0;text-align:center;bottom:290px;font-size:18px}
 </style></head>
 <body>
-<div class="grain"></div>
+
 <div class="stage" id="stage"></div>
 <script>
 const P=new URLSearchParams(location.search);
@@ -137,7 +137,7 @@ function render(t){
   const bw=document.getElementById('bw');
   if(bw){const p=eo(pr(t,1.2,1.4)); bw.style.filter=`blur(${p*7}px)`; bw.style.opacity=1-p*.55;}
   const b1=document.querySelector('.big1'); if(b1){b1.style.transform=`translateY(${(1-eo(pr(t,.1,2)))*80 - t*4}px)`}
-  const g=document.querySelector('.grain'); g.style.transform=`translate(${Math.sin(t*.4)*30}px,${Math.cos(t*.3)*20}px)`;
+  
 }
 window.render=render; render(0);
 </script>
