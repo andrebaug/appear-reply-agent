@@ -2,7 +2,7 @@ const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const path=require('path');
 const [c,f,scale='2',fps='30']=process.argv.slice(2);
-const SRC='file://'+path.resolve(__dirname,'src/ad.html');
+const SRC='file://'+path.resolve(__dirname,'ad.html');
 (async()=>{
   const b=await chromium.launch();
   const H=f==='sq'?1080:1920;

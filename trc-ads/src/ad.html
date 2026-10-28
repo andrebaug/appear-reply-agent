@@ -1,540 +1,144 @@
 <!doctype html>
 <html><head><meta charset="utf-8">
 <style>
-:root{
-  --bg:#000; --fg:#fff; --mut:rgba(255,255,255,.56); --dim:rgba(255,255,255,.34);
-  --line:rgba(255,255,255,.10); --card:#070707; --card2:#0d0d0d;
-  --ac:#00AAFF; --acs:rgba(0,170,255,.16); --bad:#FF4D4D; --ok:#35D07F; --warn:#FFB020;
-}
+@font-face{font-family:"Serif";src:url(is-italic.woff2) format("woff2");font-style:italic;font-weight:400}
+@font-face{font-family:"Serif";src:url(is-regular.woff2) format("woff2");font-style:normal;font-weight:400}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#000;overflow:hidden}
-body{font-family:"Inter Display","Inter",sans-serif;color:var(--fg);-webkit-font-smoothing:antialiased;font-feature-settings:"ss01","cv11"}
-.mono{font-family:"JetBrains Mono",monospace}
+html,body{overflow:hidden}
+body{font-family:"Inter Display","Inter",sans-serif;-webkit-font-smoothing:antialiased;position:relative}
 body.sq{width:1080px;height:1080px}
 body.st{width:1080px;height:1920px}
 
-/* background */
-.bg{position:absolute;inset:0;overflow:hidden}
-.grid{position:absolute;inset:-120px;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:90px 90px;opacity:.45;
-  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 45%,#000 0%,transparent 75%)}
-.glow{position:absolute;width:1300px;height:1300px;border-radius:50%;background:radial-gradient(circle,rgba(0,170,255,.20) 0%,rgba(0,170,255,.06) 35%,transparent 65%);left:50%;top:50%;margin:-650px 0 0 -650px}
-.vign{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,transparent 40%,rgba(0,0,0,.75) 100%)}
+/* themes */
+.ink{--bg:#0B0B0C;--fg:#F4F1EB;--mut:rgba(244,241,235,.52);--q:#1D1D20;--qfg:#F4F1EB;--btn:#2D4BFF;--btnfg:#fff;--ghost:rgba(244,241,235,.05);--acc:#6F86FF}
+.bone{--bg:#EEEAE3;--fg:#0B0B0C;--mut:rgba(11,11,12,.5);--q:#FFFFFF;--qfg:#0B0B0C;--btn:#0B0B0C;--btnfg:#F4F1EB;--ghost:rgba(11,11,12,.06);--acc:#2D4BFF}
+.cob{--bg:#2D4BFF;--fg:#FFFFFF;--mut:rgba(255,255,255,.7);--q:rgba(255,255,255,.16);--qfg:#fff;--btn:#FFFFFF;--btnfg:#0B0B0C;--ghost:rgba(255,255,255,.08);--acc:#fff}
+body{background:var(--bg);color:var(--fg)}
+.grain{position:absolute;inset:0;pointer-events:none;opacity:.5;background:radial-gradient(ellipse 80% 60% at 70% 20%,rgba(255,255,255,.06),transparent 60%)}
+.bone .grain{background:radial-gradient(ellipse 80% 60% at 70% 15%,rgba(255,255,255,.7),transparent 60%)}
+.cob .grain{background:radial-gradient(ellipse 90% 70% at 80% 10%,rgba(255,255,255,.18),transparent 60%)}
 
-/* stage */
 .stage{position:absolute;inset:0;display:flex;flex-direction:column}
-.sq .stage{padding:64px 72px 66px}
-.st .stage{padding:250px 80px 330px}
-.st .top{margin-bottom:36px}
-.st .cta{margin-top:36px}
-.sq .top{margin-bottom:8px}
-.top{display:flex;align-items:center;justify-content:space-between;flex:none}
-.logo{height:40px;width:auto;display:block}
-.st .logo{height:50px}
-.tag{font-size:17px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:10px 18px 10px 16px;display:flex;align-items:center;gap:10px}
-.st .tag{font-size:19px}
-.tag i{width:8px;height:8px;border-radius:50%;background:var(--ac);box-shadow:0 0 12px var(--ac)}
-.body{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
-h1{font-weight:800;letter-spacing:-.04em;line-height:1.0}
-.sq h1{font-size:70px}
-.st h1{font-size:86px}
-.ac{color:var(--ac)}
-.sub{color:var(--mut);font-weight:500;letter-spacing:-.01em;line-height:1.3}
-.sq .sub{font-size:28px}
-.st .sub{font-size:34px}
-.st-only{}
-.sq .st-only{display:none!important}
-.sq .sq-hide{display:none!important}
+.sq .stage{padding:76px 84px 80px}
+.st .stage{padding:250px 84px 340px}
+.top{display:flex;justify-content:space-between;align-items:center;flex:none}
+.logo{height:34px;display:block}
+.st .logo{height:44px}
+.dom{font-size:20px;font-weight:500;color:var(--mut);letter-spacing:-.005em}
+.st .dom{font-size:24px}
+.mid{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+
+h1{font-weight:700;letter-spacing:-.05em;line-height:.96}
+.sq h1{font-size:122px}
+.st h1{font-size:136px}
+h1 .ln{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
+h1 .ln>span{display:inline-block}
+h1 i,.ser{font-family:"Serif";font-style:italic;font-weight:400;letter-spacing:-.025em;font-size:1.1em;line-height:.8}
+h1 i{color:var(--acc)}
+.sub{color:var(--mut);font-weight:500;letter-spacing:-.02em;line-height:1.2}
+.sq .sub{font-size:38px;margin-top:34px}
+.st .sub{font-size:44px;margin-top:48px}
+.sub b{color:var(--fg);font-weight:600}
+
+/* bubbles */
+.bub{display:inline-flex;align-items:center;gap:14px;background:var(--q);color:var(--qfg);font-weight:500;letter-spacing:-.015em;border-radius:40px 40px 40px 10px;align-self:flex-start;box-shadow:0 20px 50px rgba(0,0,0,.12)}
+.sq .bub{font-size:32px;padding:22px 32px;margin-bottom:46px}
+.st .bub{font-size:38px;padding:28px 40px;margin-bottom:64px}
+.bub.ans{gap:0;background:#fff;color:#0B0B0C;border-radius:40px 40px 10px 40px;align-self:flex-end}
+.bub .dot{width:14px;height:14px;border-radius:50%;background:#2D4BFF;flex:none}
+.caret{display:inline-block;width:3px;height:1em;background:currentColor;vertical-align:-.14em;margin-left:3px}
 
 /* cta */
-.cta{flex:none;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.st .cta{flex-direction:column;align-items:stretch;gap:22px}
-.st .cta .btn{order:-1}
-.btn{position:relative;overflow:hidden;background:var(--ac);color:#000;font-weight:700;letter-spacing:-.015em;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:16px;white-space:nowrap;box-shadow:0 0 0 1px rgba(255,255,255,.12) inset,0 18px 50px rgba(0,170,255,.28)}
-.sq .btn{font-size:28px;height:84px;padding:0 38px}
-.st .btn{font-size:38px;height:116px;padding:0 48px}
-.btn svg{flex:none}
-.btn .sh{position:absolute;top:0;bottom:0;width:120px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);left:-200px}
-.url{font-size:24px;color:var(--mut);font-weight:500;letter-spacing:-.005em;white-space:nowrap}
-.url b{color:#fff;font-weight:600}
-.st .url{font-size:30px;text-align:center}
-.free{font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ac);margin-bottom:6px}
-.st .free{font-size:20px;text-align:center;margin-bottom:0}
-.fine{position:absolute;font-size:14px;color:rgba(255,255,255,.28);letter-spacing:.02em}
-.sq .fine{right:72px;bottom:24px}
-.st .fine{left:0;right:0;text-align:center;bottom:280px;font-size:18px}
+.foot{flex:none;display:flex;align-items:center;justify-content:space-between}
+.st .foot{flex-direction:column;align-items:stretch;gap:26px}
+.btn{display:inline-flex;align-items:center;gap:20px;background:var(--btn);color:var(--btnfg);font-weight:600;letter-spacing:-.02em;border-radius:999px;white-space:nowrap;position:relative;overflow:hidden}
+.sq .btn{font-size:32px;height:92px;padding:0 14px 0 40px}
+.st .btn{font-size:40px;height:122px;padding:0 18px 0 52px;justify-content:space-between}
+.btn .ar{border-radius:50%;background:var(--btnfg);display:grid;place-items:center;flex:none}
+.sq .btn .ar{width:64px;height:64px}
+.st .btn .ar{width:88px;height:88px}
+.btn .ar svg{stroke:var(--btn)}
+.free{color:var(--mut);font-weight:500;letter-spacing:-.01em}
+.sq .free{font-size:24px;text-align:right;line-height:1.3}
+.st .free{font-size:28px;text-align:center}
 
-/* generic card */
-.card{background:linear-gradient(180deg,#0c0c0c,#060606);border:1px solid rgba(255,255,255,.10);border-radius:28px;box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.4)}
-
-/* ===== C1 chat ===== */
-.chat{display:flex;flex-direction:column;gap:18px}
-.q{align-self:flex-end;background:#1b1b1b;border:1px solid rgba(255,255,255,.08);border-radius:28px 28px 8px 28px;font-weight:500;letter-spacing:-.01em}
-.sq .q{font-size:27px;padding:20px 28px}
-.st .q{font-size:36px;padding:26px 36px}
-.ans{padding:26px 30px}
-.st .ans{padding:36px 40px}
-.aih{display:flex;align-items:center;gap:12px;color:var(--mut);font-weight:600;letter-spacing:.02em}
-.sq .aih{font-size:19px;margin-bottom:14px}
-.st .aih{font-size:24px;margin-bottom:20px}
-.spark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#00AAFF,#0057FF);display:grid;place-items:center}
-.st .spark{width:38px;height:38px}
-.typed{color:#e9e9e9;line-height:1.35;letter-spacing:-.01em}
-.sq .typed{font-size:24px}
-.st .typed{font-size:32px}
-.caret{display:inline-block;width:3px;height:1em;background:var(--ac);vertical-align:-.15em;margin-left:2px}
-.ol{list-style:none;display:flex;flex-direction:column}
-.sq .ol{gap:10px;margin-top:16px}
-.st .ol{gap:14px;margin-top:24px}
-.ol li{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:16px;font-weight:600;letter-spacing:-.01em}
-.sq .ol li{font-size:25px;padding:14px 18px}
-.st .ol li{font-size:33px;padding:20px 24px}
-.ol .n{width:36px;height:36px;border-radius:10px;background:#1d1d1d;display:grid;place-items:center;font-size:19px;color:var(--mut);flex:none}
-.st .ol .n{width:46px;height:46px;font-size:24px}
-.ol .st5{margin-left:auto;color:var(--dim);font-weight:500;font-size:.8em}
-.verdict{display:flex;align-items:center;gap:18px;font-weight:800;letter-spacing:-.03em;color:#fff}
-.sq .verdict{font-size:42px}
-.st .verdict{font-size:58px}
-.xbadge{flex:none;border-radius:50%;background:var(--bad);display:grid;place-items:center;box-shadow:0 0 40px rgba(255,77,77,.45)}
-.sq .xbadge{width:52px;height:52px}
-.st .xbadge{width:70px;height:70px}
-
-/* ===== C2 xray ===== */
-.browser{overflow:hidden;position:relative}
-.bbar{display:flex;align-items:center;gap:10px;padding:0 22px;border-bottom:1px solid rgba(255,255,255,.08);background:#0a0a0a}
-.sq .bbar{height:54px}
-.st .bbar{height:70px}
-.bbar i{width:13px;height:13px;border-radius:50%;background:#2a2a2a}
-.addr{margin-left:16px;flex:1;background:#151515;border-radius:10px;color:var(--mut);font-size:18px;padding:8px 16px;font-weight:500}
-.st .addr{font-size:23px;padding:10px 18px}
-.view{position:relative}
-.sq .view{height:420px}
-.st .view{height:540px}
-.human,.machine{position:absolute;inset:0}
-.human{padding:30px;background:linear-gradient(160deg,#141414,#0a0a0a)}
-.hnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:34px}
-.hnav b{width:120px;height:18px;border-radius:6px;background:#fff;opacity:.9}
-.hnav span{display:flex;gap:16px}.hnav span i{width:54px;height:10px;border-radius:5px;background:#3a3a3a}
-.hhero{display:grid;grid-template-columns:1.15fr 1fr;gap:28px;align-items:center}
-.hh1{height:30px;border-radius:8px;background:#f2f2f2;margin-bottom:14px}
-.hh1.s{width:70%}
-.hp{height:12px;border-radius:6px;background:#333;margin-bottom:10px}
-.hbtn{width:170px;height:46px;border-radius:999px;background:#e8e8e8;margin-top:18px}
-.himg{aspect-ratio:1/1;border-radius:20px;background:radial-gradient(circle at 30% 30%,#5b5b5b,#1c1c1c 70%);position:relative;overflow:hidden}
-.himg:after{content:"";position:absolute;inset:22%;border-radius:50%;border:2px solid rgba(255,255,255,.25)}
-.hrow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
-.hrow i{height:90px;border-radius:14px;background:#191919;border:1px solid #232323}
-.st .hrow i{height:150px}
-.st .hrow{margin-top:44px}
-.st .hh1{height:40px}
-.machine{background:#030a10;padding:28px 30px;display:flex;flex-direction:column;justify-content:center;gap:14px}
-.st .machine{padding:44px 40px;gap:20px}
-.mh{font-size:17px;color:var(--ac);letter-spacing:.06em;margin-bottom:6px}
-.st .mh{font-size:22px;margin-bottom:10px}
-.mrow{display:flex;align-items:center;gap:16px;font-size:22px;border-bottom:1px dashed rgba(255,255,255,.08);padding-bottom:12px}
-.st .mrow{font-size:28px;padding-bottom:18px}
-.mrow .k{color:#ddd;flex:1}
-.mrow .v{font-weight:600}
-.ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:none;font-weight:800;font-size:18px;font-family:"Inter Display"}
-.st .ic{width:38px;height:38px;font-size:22px}
-.ic.b{background:rgba(255,77,77,.16);color:var(--bad)} .v.b{color:var(--bad)}
-.ic.w{background:rgba(255,176,32,.16);color:var(--warn)} .v.w{color:var(--warn)}
-.ic.g{background:rgba(53,208,127,.15);color:var(--ok)} .v.g{color:var(--ok)}
-.scan{position:absolute;left:0;right:0;height:4px;background:var(--ac);box-shadow:0 0 30px 8px rgba(0,170,255,.55);top:0}
-.vlabel{position:absolute;top:16px;right:16px;font-size:15px;font-weight:700;letter-spacing:.12em;padding:8px 12px;border-radius:8px}
-.st .vlabel{font-size:19px;top:22px;right:22px}
-
-/* ===== C3 ===== */
-.serp{position:relative}
-.res{display:flex;align-items:center;gap:18px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
-.sq .res{height:31px;padding:0 14px;margin-bottom:7px}
-.st .res{height:42px;padding:0 20px;margin-bottom:10px}
-.res .rk{font-size:15px;color:var(--dim);width:30px;font-weight:600}
-.st .res .rk{font-size:20px;width:40px}
-.res .ln{height:9px;border-radius:5px;background:#3d4f5c}
-.st .res .ln{height:12px}
-.res .ln2{height:7px;border-radius:5px;background:#262626;margin-left:auto}
-.capt{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
-.sq .capt{font-size:16px;margin-bottom:14px}
-.st .capt{font-size:21px;margin-bottom:22px}
-.one{position:absolute;left:0;right:0;top:50%;padding:30px 32px;border-radius:24px;border:1.5px solid rgba(0,170,255,.6);background:linear-gradient(180deg,rgba(0,170,255,.14),rgba(0,170,255,.04));box-shadow:0 0 80px rgba(0,170,255,.25)}
-.st .one{padding:42px 44px}
-.one .lbl{font-size:17px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ac);margin-bottom:12px}
-.st .one .lbl{font-size:22px;margin-bottom:18px}
-.one .nm{font-weight:800;letter-spacing:-.03em}
-.sq .one .nm{font-size:44px}
-.st .one .nm{font-size:62px}
-.one .ds{color:var(--mut);font-weight:500;margin-top:8px}
-.sq .one .ds{font-size:22px}
-.st .one .ds{font-size:30px;margin-top:12px}
-
-/* ===== C4 ===== */
-.promo{position:relative;text-align:center;border:2px dashed rgba(255,255,255,.18);border-radius:22px}
-.sq .promo{padding:22px}
-.st .promo{padding:36px}
-.promo .pt{font-weight:900;letter-spacing:-.02em;color:#cfcfcf}
-.sq .promo .pt{font-size:40px}
-.st .promo .pt{font-size:50px}
-.promo .ps{color:var(--dim);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
-.sq .promo .ps{font-size:15px}
-.st .promo .ps{font-size:20px}
-.strike{position:absolute;left:-2%;right:-2%;top:50%;height:7px;background:var(--bad);border-radius:4px;transform-origin:left center;box-shadow:0 0 24px rgba(255,77,77,.6)}
-.stamp{position:absolute;right:-10px;top:-16px;background:var(--bad);color:#fff;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:10px;transform:rotate(6deg)}
-.sq .stamp{font-size:18px;padding:9px 14px}
-.st .stamp{font-size:24px;padding:12px 18px}
-.does{display:flex;flex-direction:column}
-.sq .does{gap:12px}
-.st .does{gap:18px}
-.do{display:flex;align-items:center;gap:18px;font-weight:600;letter-spacing:-.015em}
-.sq .do{font-size:27px}
-.st .do{font-size:35px}
-.tick{flex:none;border-radius:50%;background:var(--acs);border:1.5px solid var(--ac);display:grid;place-items:center}
-.sq .tick{width:40px;height:40px}
-.st .tick{width:54px;height:54px}
-.lead{font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
-.sq .lead{font-size:16px}
-.st .lead{font-size:21px}
-
-/* ===== C5 ===== */
-.vs{display:grid;gap:18px}
-.sq .vs{grid-template-columns:1fr 1fr}
-.st .vs{grid-template-columns:1fr;gap:20px}
-.panel{padding:24px 24px 26px}
-.st .panel{padding:28px 32px}
-.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.ph b{font-size:20px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
-.st .ph b{font-size:24px}
-.pill{font-size:16px;font-weight:700;padding:7px 12px;border-radius:999px;letter-spacing:.02em}
-.st .pill{font-size:21px;padding:9px 16px}
-.pill.g{background:rgba(53,208,127,.15);color:var(--ok)}
-.pill.b{background:rgba(255,77,77,.15);color:var(--bad)}
-.g1{border-radius:14px;padding:16px 18px;background:rgba(53,208,127,.06);border:1px solid rgba(53,208,127,.35)}
-.st .g1{padding:22px 24px}
-.g1 .u{font-size:16px;color:#7fb8a0}
-.g1 .t{font-size:24px;font-weight:700;color:#cfe6ff;margin-top:4px;letter-spacing:-.01em}
-.st .g1 .u{font-size:21px}.st .g1 .t{font-size:32px}
-.gx{height:12px;border-radius:6px;background:#202020;margin-top:12px}
-.st .gx{height:16px;margin-top:16px}
-.cl{font-size:20px;color:#ddd;line-height:1.4}
-.st .cl{font-size:27px}
-.cl .row{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.08)}
-.st .cl .row{padding:12px 0}
-.cl .row i{color:var(--dim);font-style:normal;width:22px}
-.miss{margin-top:14px;display:flex;align-items:center;gap:10px;color:var(--bad);font-weight:700;font-size:20px}
-.st .miss{font-size:27px;margin-top:20px}
-.kick{font-weight:800;letter-spacing:-.035em;line-height:1.08}
-.sq .kick{font-size:40px}
-.st .kick{font-size:50px}
-
-/* ===== C6 ===== */
-.form{display:flex;align-items:center;gap:12px;padding:12px 12px 12px 26px}
-.st .form{padding:16px 16px 16px 32px}
-.inp{flex:1;font-size:27px;font-weight:500;color:#fff;letter-spacing:-.01em;display:flex;align-items:center;gap:12px}
-.st .inp{font-size:34px}
-.inp .ph2{color:var(--dim)}
-.go{background:#fff;color:#000;font-weight:700;border-radius:16px;font-size:23px;padding:0 26px;height:62px;display:flex;align-items:center}
-.st .go{font-size:29px;height:80px;padding:0 34px}
-.checks{display:grid;gap:12px}
-.sq .checks{grid-template-columns:1fr 1fr}
-.st .checks{grid-template-columns:1fr;gap:12px}
-.ck{display:flex;align-items:center;gap:14px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);font-weight:600;letter-spacing:-.01em}
-.sq .ck{font-size:22px;padding:16px 18px}
-.st .ck{font-size:30px;padding:18px 24px}
-.spin{flex:none;border-radius:50%;border:3px solid rgba(255,255,255,.12);border-top-color:var(--ac)}
-.sq .spin{width:30px;height:30px}
-.st .spin{width:40px;height:40px}
-.done{flex:none;border-radius:50%;background:var(--ac);display:none;place-items:center}
-.sq .done{width:30px;height:30px}
-.st .done{width:40px;height:40px}
-.ck .sts{margin-left:auto;color:var(--dim);font-size:.78em;font-weight:500}
-.score{display:flex;align-items:center;gap:28px;padding:22px 28px}
-.st .score{padding:32px 38px;gap:36px}
-.ring{position:relative;flex:none}
-.ring svg{display:block}
-.ring .num{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;letter-spacing:-.03em}
-.sq .ring .num{font-size:40px}
-.st .ring .num{font-size:56px}
-.score .t1{font-weight:800;letter-spacing:-.025em;line-height:1.1}
-.sq .score .t1{font-size:32px}
-.st .score .t1{font-size:44px}
-.score .t2{color:var(--mut);font-weight:500;margin-top:8px}
-.sq .score .t2{font-size:21px}
-.st .score .t2{font-size:28px}
-.cursor{position:absolute;width:34px;height:34px;z-index:9;pointer-events:none}
+.big1{position:absolute;font-weight:800;letter-spacing:-.08em;line-height:.8;color:transparent;-webkit-text-stroke:3px rgba(11,11,12,.10);pointer-events:none}
+.sq .big1{font-size:820px;right:10px;bottom:-60px}
+.st .big1{font-size:1150px;right:-10px;bottom:200px}
+.blurw{display:inline-block}
+.fine{position:absolute;font-size:15px;color:var(--mut);opacity:.6}
+.sq .fine{left:84px;bottom:34px}
+.st .fine{left:0;right:0;text-align:center;bottom:290px;font-size:18px}
 </style></head>
 <body>
-<div class="bg"><div class="grid" id="grid"></div><div class="glow" id="glow"></div><div class="vign"></div></div>
+<div class="grain"></div>
 <div class="stage" id="stage"></div>
-
-<template id="hdr">
-  <div class="top" data-a="fade 0 .6"><img class="logo" src="logo.png"><div class="tag"><i></i>AI search visibility</div></div>
-</template>
-<template id="ctaT">
-  <div class="cta" data-a="up {S} .7">
-    <div class="sq-only-wrap"><div class="free">{FREE}</div><div class="url">therankcollective.com<b>/audit</b></div></div>
-    <div class="btn"><span>{BTN}</span><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><i class="sh"></i></div>
-  </div>
-</template>
-
 <script>
 const P=new URLSearchParams(location.search);
-const C=P.get('c')||'c1', F=P.get('f')||'sq';
-document.body.className=F;
-const ST=F==='st';
+const C=P.get('c')||'a', F=P.get('f')||'sq', ST=F==='st';
+const ARROW='<svg width="46%" height="46%" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 
-const ICON_X='<svg viewBox="0 0 24 24" width="60%" height="60%" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-const ICON_T=(c='#00AAFF')=>`<svg viewBox="0 0 24 24" width="58%" height="58%" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
-const SPARK='<svg viewBox="0 0 24 24" width="62%" height="62%" fill="#fff"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z"/></svg>';
+function H(lines,start,step=.12){return `<h1>${lines.map((l,i)=>`<span class="ln"><span data-a="mask ${(start+i*step).toFixed(2)} .8">${l}</span></span>`).join('')}</h1>`}
+function hdr(theme){return `<div class="top" data-a="fade 0 .6"><img class="logo" src="${theme==='bone'?'logo_dark.png':'logo.png'}"><span class="dom">therankcollective.com</span></div>`}
+function foot(s,label='Get your free AI audit'){return `<div class="foot" data-a="up ${s} .7"><div class="btn">${label}<span class="ar">${ARROW}</span></div><div class="free">${ST?'Free. Takes one click.':'Free.<br>Takes one click.'}</div></div>`}
 
-function cta(start,btn,free){
-  return document.getElementById('ctaT').innerHTML.replace('{S}',start).replace('{BTN}',btn).replace('{FREE}',free||'Free AI readiness check');
-}
-const HDR=document.getElementById('hdr').innerHTML;
-
-/* ---------- concepts ---------- */
 const CON={
-c1:{end:12,html:()=>`
- ${HDR}
- <div class="body" style="gap:${ST?36:24}px">
-  <h1 data-a="up .1 .7">Your next client just asked AI <span class="ac">who to hire.</span></h1>
-  <div class="chat">
-    <div class="q" data-a="pop 1.0 .5">Who's the best injury lawyer in Austin?</div>
-    <div class="card ans" data-a="up 1.7 .6">
-      <div class="aih"><div class="spark">${SPARK}</div>AI assistant</div>
-      <div class="typed" data-type="2.2 1.3">Based on reviews and reputation, three firms stand out:</div>
-      <ul class="ol">
-        <li data-a="up 3.5 .4"><span class="n">1</span>Lone Star Injury Group</li>
-        <li data-a="up 3.8 .4"><span class="n">2</span>Capitol City Law</li>
-        <li data-a="up 4.1 .4"><span class="n">3</span>Hill Country Legal</li>
-      </ul>
-    </div>
-  </div>
-  <div class="verdict" data-a="stamp 4.9 .55"><div class="xbadge">${ICON_X}</div>Your firm wasn't mentioned.</div>
-  <div class="sub st-only" data-a="up 5.7 .6">If AI can't read your website, it can't recommend you.</div>
- </div>
- ${cta(6.3,ST?'Get my free AI readiness check':'Check my site free')}
- <div class="fine" data-a="fade 6.3 .6">Illustrative example</div>`},
-
-c2:{end:12,html:()=>`
- ${HDR}
- <div class="body" style="gap:${ST?48:26}px">
-  <h1 data-a="up .1 .7">People see a great website. <span class="ac">AI sees a blur.</span></h1>
-  <div class="card browser" data-a="up .8 .7">
-    <div class="bbar"><i></i><i></i><i></i><div class="addr">yourbusiness.com</div></div>
-    <div class="view" id="view">
-      <div class="human">
-        <div class="vlabel" style="background:#fff;color:#000">HUMAN VIEW</div>
-        <div class="hnav"><b></b><span><i></i><i></i><i></i></span></div>
-        <div class="hhero"><div><div class="hh1"></div><div class="hh1 s"></div><div class="hp"></div><div class="hp" style="width:80%"></div><div class="hbtn"></div></div><div class="himg"></div></div>
-        <div class="hrow"><i></i><i></i><i></i></div>
-      </div>
-      <div class="machine mono" id="machine">
-        <div class="vlabel" style="background:var(--ac);color:#000;font-family:'Inter Display'">AI VIEW</div>
-        <div class="mh">&gt; AI crawler reading yourbusiness.com</div>
-        <div class="mrow" data-a="left 3.3 .35"><span class="ic b">✕</span><span class="k">Structured data</span><span class="v b">missing</span></div>
-        <div class="mrow" data-a="left 3.6 .35"><span class="ic b">✕</span><span class="k">llms.txt</span><span class="v b">not found</span></div>
-        <div class="mrow" data-a="left 3.9 .35"><span class="ic w">!</span><span class="k">Crawler access</span><span class="v w">partly blocked</span></div>
-        <div class="mrow" data-a="left 4.2 .35"><span class="ic b">✕</span><span class="k">Clear answers</span><span class="v b">hard to find</span></div>
-        <div class="mrow" data-a="left 4.5 .35" style="border:0"><span class="ic g">✓</span><span class="k">Page title</span><span class="v g">ok</span></div>
-      </div>
-      <div class="scan" id="scan"></div>
-    </div>
-  </div>
-  <div class="sub" data-a="up 5.4 .6"><b style="color:#fff">AI can't recommend what it can't read.</b> ${ST?'Our free check shows you exactly what to fix.':'See exactly what to fix.'}</div>
- </div>
- ${cta(6.0,ST?'Run my free AI readiness check':'Run the free check')}
- <div class="fine" data-a="fade 6 .6">Illustrative example</div>`},
-
-c3:{end:12,html:()=>`
- ${HDR}
- <div class="body" style="gap:${ST?50:26}px">
-  <h1 data-a="up .1 .7">There's no page 2 <span class="ac">in AI.</span></h1>
-  <div>
-   <div class="capt" id="capA" data-a="fade .7 .5" data-x="3.0 .4"><span style="color:#fff">Google:</span> ten blue links</div>
-   <div class="capt" id="capB" data-a="fade 3.4 .5" style="position:absolute;opacity:0"><span class="ac">AI:</span> one answer</div>
-   <div class="serp" id="serp"></div>
-  </div>
-  <div class="sub" data-a="up 5.0 .6">When someone asks AI for the best in your field, there's one spot. <b style="color:#fff">We make your business easy for AI to understand, trust and recommend.</b></div>
- </div>
- ${cta(5.7,ST?'Get my free AI readiness check':'Check my site free')}`},
-
-c4:{end:12,html:()=>`
- ${HDR}
- <div class="body" style="gap:${ST?50:24}px">
-  <h1 data-a="up .1 .7">Anyone who guarantees you'll be #1 in ChatGPT <span class="ac">is lying.</span></h1>
-  <div class="promo" data-a="pop 1.1 .5" id="promo">
-    <div class="pt">GUARANTEED #1 IN CHATGPT</div><div class="ps">Only $499. Results in 7 days.</div>
-    <div class="strike" id="strike"></div>
-    <div class="stamp" data-a="stamp 2.4 .45">Not possible</div>
-  </div>
-  <div class="does">
-    <div class="lead" data-a="fade 3.2 .5" style="margin-bottom:${ST?8:4}px">What we actually do</div>
-    <div class="do" data-a="left 3.5 .4"><div class="tick">${ICON_T()}</div>Make your site readable to AI</div>
-    <div class="do" data-a="left 3.8 .4"><div class="tick">${ICON_T()}</div>Turn your pages into clear answers</div>
-    <div class="do" data-a="left 4.1 .4"><div class="tick">${ICON_T()}</div>Build the signals AI trusts</div>
-    <div class="do" data-a="left 4.4 .4"><div class="tick">${ICON_T()}</div>Track what changes, honestly</div>
-  </div>
-  <div class="sub" data-a="up 5.1 .6">AI decides who to recommend. <b style="color:#fff">We make you the easy choice.</b></div>
- </div>
- ${cta(5.8,ST?'Start with a free readiness check':'Start free')}`},
-
-c5:{end:12,html:()=>`
- ${HDR}
- <div class="body" style="gap:${ST?34:24}px">
-  <h1 data-a="up .1 .7" style="${ST?'font-size:78px':''}">You rank on Google. <span class="ac">So why doesn't AI know you?</span></h1>
-  <div class="vs">
-   <div class="card panel" data-a="up 1.0 .6">
-     <div class="ph"><b>Google</b><span class="pill g">Ranking</span></div>
-     <div class="g1"><div class="u">yourbusiness.com</div><div class="t">#1 for your main keyword</div></div>
-     <div class="gx" style="width:92%"></div><div class="gx" style="width:70%"></div>
-   </div>
-   <div class="card panel" data-a="up 1.8 .6">
-     <div class="ph"><b>ChatGPT</b><span class="pill b" data-a="pop 3.6 .4">Not mentioned</span></div>
-     <div class="cl">
-       <div class="row" data-a="fade 2.4 .3"><i>1</i>A competitor</div>
-       <div class="row" data-a="fade 2.7 .3"><i>2</i>Another competitor</div>
-       <div class="row" data-a="fade 3.0 .3" style="border:0"><i>3</i>Someone else</div>
-     </div>
-     <div class="miss" data-a="up 3.7 .4"><span class="ic b" style="width:28px;height:28px;font-size:16px">✕</span>yourbusiness.com</div>
-   </div>
-  </div>
-  <div class="kick" data-a="up 4.6 .6">SEO gets you <span style="color:var(--mut)">ranked.</span><br>GEO gets you <span class="ac">recommended.</span></div>
- </div>
- ${cta(5.4,ST?'See how AI reads my site, free':'Check my site free')}
- <div class="fine" data-a="fade 5.4 .6">Illustrative example</div>`},
-
-c6:{end:12,html:()=>`
- ${HDR}
- <div class="body" style="gap:${ST?40:22}px">
-  <h1 data-a="up .1 .7">Is your website <span class="ac">ready&nbsp;for&nbsp;AI?</span></h1>
-  <div class="card form" data-a="up .7 .6" style="position:relative">
-    <div class="inp"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg><span id="urlt" class="ph2">yourwebsite.com</span></div>
-    <div class="go" id="go">Analyze</div>
-    <svg class="cursor" id="cur" viewBox="0 0 24 24"><path d="M4 2l16 9-7 2-3 7z" fill="#fff" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg>
-  </div>
-  <div class="checks">
-    <div class="ck" data-a="up 3.0 .35"><div class="spin"></div><div class="done">${ICON_T('#000')}</div>Crawler access<span class="sts">checked</span></div>
-    <div class="ck" data-a="up 3.15 .35"><div class="spin"></div><div class="done">${ICON_T('#000')}</div>Structured data<span class="sts">checked</span></div>
-    <div class="ck" data-a="up 3.3 .35"><div class="spin"></div><div class="done">${ICON_T('#000')}</div>Metadata<span class="sts">checked</span></div>
-    <div class="ck" data-a="up 3.45 .35"><div class="spin"></div><div class="done">${ICON_T('#000')}</div>Content signals<span class="sts">checked</span></div>
-  </div>
-  <div class="card score" data-a="up 5.0 .6">
-    <div class="ring"><svg id="ringsvg" width="${ST?150:112}" height="${ST?150:112}" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#1d1d1d" stroke-width="10"/><circle id="arc" cx="60" cy="60" r="52" fill="none" stroke="#00AAFF" stroke-width="10" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)"/></svg><div class="num" id="num" style="filter:blur(11px);opacity:.8">00</div></div>
-    <div><div class="t1">Your AI readiness score is ready.</div><div class="t2">Plus the exact fixes, in plain English.</div></div>
-  </div>
- </div>
- ${cta(6.0,'See my score free','Free. No sales call.')}`}
+ a:{theme:'ink',html:()=>`${hdr('ink')}<div class="mid">
+   <div class="bub" data-a="pop .2 .5"><span class="dot"></span><span data-type=".5 1.0">Who's the best dentist near me?</span></div>
+   ${H(['ChatGPT just','recommended','<i>your competitor.</i>'],1.7,.14)}
+  </div>${foot(3.4)}`},
+ b:{theme:'bone',html:()=>`${hdr('bone')}<div class="mid">
+   ${H(['Your customers','stopped <i>Googling.</i>'],.2,.16)}
+   <div class="sub" data-a="up 1.5 .7">They ask AI now.<br><b>Is it naming you?</b></div>
+  </div>${foot(2.6)}`},
+ c:{theme:'cob',html:()=>`${hdr('cob')}<div class="mid">
+   <div class="bub" data-a="pop .2 .5"><span data-type=".4 .9">Who's the best roofer in town?</span></div>
+   <div class="bub ans" data-a="pop 1.6 .5"><span>I'd go with <b>your business.</b></span></div>
+   ${H(['Be the <i>answer.</i>'],2.5)}
+   <div class="sub" data-a="up 3.1 .7">Get named when people ask AI.</div>
+  </div>${foot(3.8,'Get your free AI audit')}`},
+ d:{theme:'ink',html:()=>`${hdr('ink')}<div class="mid">
+   ${H(['<span class="blurw" id="bw">Invisible</span>','to <i>AI?</i>'],.2,.16)}
+   <div class="sub" data-a="up 2.4 .7">If AI can't read your site,<br><b>it won't recommend you.</b></div>
+  </div>${foot(3.2,'Check my site free')}`},
+ e:{theme:'bone',html:()=>`${hdr('bone')}<div class="mid">
+   ${H(["There's no","page 2","<i>in AI.</i>"],.2,.14)}
+   <div class="sub" data-a="up 1.7 .7">AI gives one answer.<br><b>Make sure it's you.</b></div>
+  </div>${foot(2.6)}`},
+ f:{theme:'ink',html:()=>`${hdr('ink')}<div class="mid">
+   ${H(['Ask ChatGPT',"who's the best","in your city."],.2,.14)}
+   <div class="sub ser" data-a="up 1.8 .8" style="color:var(--acc);font-size:${ST?84:76}px;line-height:1;margin-top:${ST?44:30}px">Not you? We fix that.</div>
+  </div>${foot(2.8)}`},
 };
-
 const def=CON[C];
+document.body.className=F+' '+def.theme;
 document.getElementById('stage').innerHTML=def.html();
-window.DUR=def.end;
-window.STATIC_T=8.4;
+window.DUR=8; window.STATIC_T=7.5;
 
-/* ---------- c3 serp build ---------- */
-if(C==='c3'){
-  const s=document.getElementById('serp');
-  let h='';
-  for(let i=1;i<=10;i++){
-    const w=[62,48,70,55,66,44,58,72,50,61][i-1];
-    h+=`<div class="res" data-i="${i}"><span class="rk">#${i}</span><span class="ln" style="width:${w}%"></span><span class="ln2" style="width:${14+(i*7)%12}%"></span></div>`;
-  }
-  h+=`<div class="one" id="one"><div class="lbl">The answer</div><div class="nm">Your business</div><div class="ds">"The one I'd recommend for this is…"</div></div>`;
-  s.innerHTML=h;
-}
-
-/* ---------- easing + engine ---------- */
-const cl=(x)=>Math.min(1,Math.max(0,x));
-const eo=(p)=>1-Math.pow(1-p,4);
-const eio=(p)=>p<.5?8*p*p*p*p:1-Math.pow(-2*p+2,4)/2;
-const back=(p)=>{const c1=1.5,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2)};
+const cl=x=>Math.min(1,Math.max(0,x)), eo=p=>1-Math.pow(1-p,4), ex=p=>p>=1?1:1-Math.pow(2,-10*p);
+const back=p=>{const a=1.4,b=a+1;return 1+b*Math.pow(p-1,3)+a*Math.pow(p-1,2)};
 const pr=(t,s,d)=>cl((t-s)/d);
-
-const els=[...document.querySelectorAll('[data-a]')].map(el=>{
-  const [type,s,d]=el.dataset.a.split(' ');const x=el.dataset.x?el.dataset.x.split(' ').map(Number):null;
-  return {el,type,s:+s,d:+d,x};
-});
+const els=[...document.querySelectorAll('[data-a]')].map(el=>{const [type,s,d]=el.dataset.a.split(' ');return {el,type,s:+s,d:+d}});
 const typed=[...document.querySelectorAll('[data-type]')].map(el=>{const [s,d]=el.dataset.type.split(' ').map(Number);return {el,s,d,txt:el.textContent}});
-
 function render(t){
-  // ambient
-  const g=document.getElementById('glow');
-  g.style.transform=`translate(${Math.sin(t*.35)*90}px,${Math.cos(t*.27)*70 + (ST?-120:-40)}px) scale(${1+Math.sin(t*.5)*.05})`;
-  document.getElementById('grid').style.transform=`translateY(${(t*9)%90}px)`;
-
   for(const o of els){
-    let p=pr(t,o.s,o.d), e=eo(p), op=e, tf='', bl=0;
-    switch(o.type){
-      case 'up': tf=`translateY(${(1-e)*46}px)`; bl=(1-e)*10; break;
-      case 'left': tf=`translateX(${(1-e)*-40}px)`; break;
-      case 'pop': {const b=back(p); tf=`scale(${.86+.14*b})`; op=cl(p*2.2); break;}
-      case 'stamp': {const b=back(p); tf=`scale(${1.5-.5*b})${o.el.classList.contains('stamp')?' rotate(6deg)':''}`; op=cl(p*3); break;}
-      case 'fade': break;
-    }
-    if(o.x){const q=eo(pr(t,o.x[0],o.x[1])); op*=1-q; tf+=` translateY(${-q*16}px)`;}
+    const p=pr(t,o.s,o.d); let op=1,tf='',bl=0;
+    if(o.type==='mask'){const e=ex(p); tf=`translateY(${(1-e)*105}%)`;}
+    else if(o.type==='up'){const e=eo(p); op=e; tf=`translateY(${(1-e)*40}px)`; bl=(1-e)*8;}
+    else if(o.type==='pop'){op=cl(p*2.5); tf=`scale(${.8+.2*back(p)})`; o.el.style.transformOrigin=o.el.classList.contains('ans')?'100% 100%':'0 100%';}
+    else if(o.type==='fade'){op=eo(p);}
     o.el.style.opacity=op; o.el.style.transform=tf; o.el.style.filter=bl>.05?`blur(${bl}px)`:'none';
   }
   for(const o of typed){
     const p=pr(t,o.s,o.d), n=Math.round(o.txt.length*p);
-    const showCaret=t>=o.s-0.3 && (p<1 || (t<o.s+o.d+0.8 && Math.floor(t*2.5)%2===0));
-    o.el.innerHTML=o.txt.slice(0,n)+(showCaret?'<span class="caret"></span>':'')+`<span style="opacity:0">${o.txt.slice(n)}</span>`;
+    const car=p<1&&t>=o.s;
+    o.el.innerHTML=o.txt.slice(0,n)+(car?'<span class="caret"></span>':'')+`<span style="opacity:0">${o.txt.slice(n)}</span>`;
   }
-  // button shimmer
-  document.querySelectorAll('.btn .sh').forEach(sh=>{const c=((t-7)%3.2+3.2)%3.2; sh.style.left=(t<7?-200:(-200+c/0.9*900))+'px'});
-  if(window.custom) window.custom(t);
+  const bw=document.getElementById('bw');
+  if(bw){const p=eo(pr(t,1.2,1.4)); bw.style.filter=`blur(${p*7}px)`; bw.style.opacity=1-p*.55;}
+  const b1=document.querySelector('.big1'); if(b1){b1.style.transform=`translateY(${(1-eo(pr(t,.1,2)))*80 - t*4}px)`}
+  const g=document.querySelector('.grain'); g.style.transform=`translate(${Math.sin(t*.4)*30}px,${Math.cos(t*.3)*20}px)`;
 }
-
-/* ---------- per concept custom ---------- */
-if(C==='c2'){
-  const view=document.getElementById('view'), scan=document.getElementById('scan'), m=document.getElementById('machine');
-  window.custom=t=>{
-    const H=view.offsetHeight, p=eio(pr(t,2.0,1.1));
-    scan.style.top=(p*H-2)+'px'; scan.style.opacity=(p>0&&p<1)?1:0;
-    m.style.clipPath=`inset(0 0 ${(1-p)*100}% 0)`;
-  };
-}
-if(C==='c3'){
-  const rows=[...document.querySelectorAll('.res')], one=document.getElementById('one'), A=document.getElementById('capA'), B=document.getElementById('capB');
-  B.style.position='relative'; B.style.display='none';
-  window.custom=t=>{
-    rows.forEach((r,i)=>{
-      const a=eo(pr(t,.9+i*.09,.4));
-      const out=eio(pr(t,2.7+(9-i)*.05,.6));
-      r.style.opacity=a*(1-out*.8); r.style.transform=`translateY(${(1-a)*20 + out*(i%2?18:-18)}px) scale(${1-out*.15})`;
-      r.style.filter=out>0.02?`blur(${out*3.5}px)`:'none';
-    });
-    const op=eo(pr(t,3.3,.7));
-    one.style.opacity=op; one.style.transform=`translateY(-50%) scale(${.8+.2*back(pr(t,3.3,.7))})`;
-    const showB=t>=3.2; A.style.display=showB?'none':'flex'; B.style.display=showB?'flex':'none';
-  };
-}
-if(C==='c4'){
-  const s=document.getElementById('strike'), pt=document.querySelector('.promo .pt'), ps=document.querySelector('.promo .ps');
-  window.custom=t=>{const p=eio(pr(t,1.8,.5)); s.style.transform=`translateY(-50%) rotate(-3deg) scaleX(${p})`; s.style.opacity=p>0?1:0;
-    const f=pr(t,2.0,.6); pt.style.opacity=1-f*.55; ps.style.opacity=1-f*.55;};
-}
-if(C==='c6'){
-  const u=document.getElementById('urlt'), go=document.getElementById('go'), cur=document.getElementById('cur'),
-        cks=[...document.querySelectorAll('.ck')], arc=document.getElementById('arc'), num=document.getElementById('num'), form=document.querySelector('.form');
-  const site='yourwebsite.com';
-  window.custom=t=>{
-    const tp=pr(t,1.2,.9); const n=Math.round(site.length*tp);
-    if(t<1.2){u.textContent=site;u.className='ph2'} else {u.innerHTML=site.slice(0,n)+((tp<1||(t<3.2&&Math.floor(t*2.5)%2))?'<span class="caret"></span>':'');u.className=''}
-    // cursor
-    const W=form.offsetWidth, Hh=form.offsetHeight, gx=go.offsetLeft+go.offsetWidth*.55, gy=go.offsetTop+go.offsetHeight*.6;
-    const cp=eio(pr(t,1.9,.6)); const sx=W*.55, sy=Hh+120;
-    cur.style.left=(sx+(gx-sx)*cp)+'px'; cur.style.top=(sy+(gy-sy)*cp)+'px';
-    cur.style.opacity=t<1.8?0:(t>3.4?1-cl((t-3.4)/.4):1);
-    const press=t>2.55&&t<2.8; go.style.transform=press?'scale(.94)':'scale(1)'; go.style.background=t>2.55?'#00AAFF':'#fff';
-    go.textContent=t>2.6?'Analyzing…':'Analyze'; if(t>4.8) go.textContent='Done';
-    cks.forEach((c,i)=>{const d=t>3.9+i*.22; const sp=c.querySelector('.spin'), dn=c.querySelector('.done');
-      sp.style.display=d?'none':'block'; sp.style.transform=`rotate(${t*540}deg)`; dn.style.display=d?'grid':'none';
-      c.querySelector('.sts').style.color=d?'var(--ac)':'var(--dim)'; c.querySelector('.sts').textContent=d?'checked':'scanning';});
-    const ap=eo(pr(t,5.3,1.4)); const val=Math.round(ap*73);
-    arc.setAttribute('stroke-dashoffset',326.7*(1-ap*.73)); num.textContent=String(val).padStart(2,'0');
-  };
-}
-
-window.render=render;
-render(0);
+window.render=render; render(0);
 </script>
 </body></html>
