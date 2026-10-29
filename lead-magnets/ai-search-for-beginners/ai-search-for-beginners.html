@@ -1,0 +1,926 @@
+<title>AI Search for Beginners</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a printed research report. Ink black cover and chapter openers, warm paper pages, Appear blue used only for data and the "you" in every answer. */
+:root {
+  color-scheme: light;
+  --ink: #0b0b0f;
+  --ink-2: #2a2a33;
+  --muted: #5d5f6b;
+  --rule: #e4e2dc;
+  --paper: #fffefa;
+  --paper-2: #f5f3ec;
+  --blue: #0066ff;
+  --blue-soft: #e6efff;
+  --on-ink: #f4f3ef;
+  --on-ink-muted: #9a9ba6;
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.65; margin: 0; -webkit-font-smoothing: antialiased; }
+a { color: var(--blue); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.band { width: 100%; }
+.band.ink { background: var(--ink); color: var(--on-ink); }
+.band.tint { background: var(--paper-2); }
+
+h1, h2, h3, h4 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
+h3 { font-size: 24px; line-height: 1.25; margin-top: 44px; margin-bottom: 10px; }
+h4 { font-family: var(--body); font-weight: 600; font-size: 16px; margin-top: 26px; margin-bottom: 4px; letter-spacing: 0; }
+p { margin: 0 0 16px; }
+.lede { font-size: 19px; line-height: 1.6; color: var(--ink-2); }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.ink .eyebrow { color: var(--on-ink-muted); }
+strong { font-weight: 600; }
+ul, ol { padding-left: 22px; margin: 0 0 18px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--muted); }
+
+/* Cover */
+.cover { padding-block: 64px 56px; }
+.cover .wrap { display: grid; gap: 40px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-size: 26px; letter-spacing: -0.02em; }
+.brand .mark { width: 26px; height: 26px; border-radius: 50%; background: var(--blue); position: relative; flex: none; }
+.brand .mark::after { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: var(--ink); }
+.cover h1 { font-size: clamp(48px, 10vw, 92px); line-height: 0.98; font-weight: 300; letter-spacing: -0.03em; }
+.cover h1 em { font-style: italic; color: var(--blue); font-weight: 400; }
+.cover .sub { font-size: 20px; line-height: 1.5; color: var(--on-ink); max-width: 34ch; margin: 0; }
+.chat { border: 1px solid #2c2c36; border-radius: 14px; padding: 20px; display: grid; gap: 14px; max-width: 520px; background: #121218; }
+.chat .q { justify-self: end; background: #23232c; border-radius: 14px 14px 4px 14px; padding: 10px 14px; font-size: 15px; max-width: 85%; }
+.chat .a { font-size: 15px; color: #cfd0d6; }
+.chat .a ol { margin: 8px 0 0; padding-left: 20px; }
+.chat .a li { margin-bottom: 4px; }
+.chat .a .you { color: #fff; background: rgba(0, 102, 255, 0.28); border-radius: 4px; padding: 0 5px; font-weight: 500; }
+.chat .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--on-ink-muted); }
+.cover-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; border-top: 1px solid #2c2c36; padding-top: 18px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--on-ink-muted); }
+
+/* Sections */
+section.page { padding-block: 64px; }
+.opener { padding-block: 72px 56px; }
+.opener .num { font-family: var(--display); font-size: 120px; line-height: 0.9; font-weight: 300; color: var(--blue); letter-spacing: -0.04em; display: block; margin-bottom: 18px; }
+.opener h2 { font-size: clamp(36px, 6vw, 56px); margin-bottom: 18px; color: var(--on-ink); }
+.opener p { color: #cfd0d6; font-size: 18px; max-width: 46ch; margin: 0; }
+
+/* Stat callouts */
+.stat { border-top: 2px solid var(--ink); padding-top: 16px; margin: 36px 0; display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 8px 28px; align-items: start; }
+.stat .big { font-family: var(--display); font-size: 58px; line-height: 1; letter-spacing: -0.03em; color: var(--blue); font-weight: 400; font-variant-numeric: tabular-nums; }
+.stat .what { font-size: 17px; line-height: 1.5; margin: 0; }
+.stat .src { grid-column: 2; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.stat .src::before { content: "Source: "; }
+
+/* Findings */
+.findings { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 0; counter-reset: f; }
+.findings li { counter-increment: f; display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 16px; padding: 18px 0; border-top: 1px solid var(--rule); margin: 0; }
+.findings li::before { content: counter(f, decimal-leading-zero); font-family: var(--mono); font-size: 13px; color: var(--blue); padding-top: 3px; }
+.findings b { font-weight: 600; display: block; margin-bottom: 2px; }
+.findings span { color: var(--ink-2); font-size: 15px; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 24px 0 28px; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.45; min-width: 520px; }
+th { text-align: left; font-family: var(--mono); font-weight: 500; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom: 1.5px solid var(--ink); padding: 8px 12px 8px 0; }
+td { border-bottom: 1px solid var(--rule); padding: 11px 12px 11px 0; vertical-align: top; }
+td:first-child { font-weight: 600; }
+.worksheet td { height: 40px; }
+.worksheet td:first-child { font-weight: 400; }
+
+/* Notes */
+.note { background: var(--blue-soft); border-radius: 10px; padding: 18px 20px; margin: 28px 0; font-size: 15.5px; }
+.note p:last-child { margin: 0; }
+.note .eyebrow { color: var(--blue); display: block; margin-bottom: 6px; }
+.pull { font-family: var(--display); font-size: 28px; line-height: 1.3; font-weight: 300; margin: 40px 0; padding-left: 22px; border-left: 2px solid var(--blue); text-wrap: balance; }
+code, .mono { font-family: var(--mono); font-size: 0.88em; }
+pre { font-family: var(--mono); font-size: 13px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; overflow-x: auto; line-height: 1.55; }
+
+/* Bar charts */
+.chart { margin: 28px 0 32px; }
+.chart .title { font-weight: 600; margin-bottom: 4px; }
+.chart .cap { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 10px; }
+.bars { display: grid; gap: 10px; margin-top: 14px; }
+.bar { display: grid; grid-template-columns: minmax(0, 132px) minmax(0, 1fr) 58px; gap: 12px; align-items: center; font-size: 14px; }
+.bar .track { height: 22px; background: var(--paper-2); border-radius: 3px; position: relative; }
+.bar .fill { position: absolute; inset: 0 auto 0 0; background: var(--ink); border-radius: 3px; }
+.bar.hi .fill { background: var(--blue); }
+.bar .v { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+
+/* Engine cards */
+.engines { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0; border-top: 1px solid var(--rule); margin: 24px 0; }
+.engines div { padding: 16px 16px 16px 0; border-bottom: 1px solid var(--rule); min-width: 0; }
+.engines b { display: block; font-family: var(--display); font-weight: 400; font-size: 20px; margin-bottom: 4px; }
+.engines span { font-size: 14.5px; color: var(--ink-2); }
+
+/* Weeks */
+.week { border-top: 2px solid var(--ink); padding-top: 14px; margin-top: 40px; }
+.week .eyebrow { color: var(--blue); }
+.week h3 { margin-top: 6px; }
+.check { list-style: none; padding: 0; }
+.check li { padding-left: 30px; position: relative; }
+.check li::before { content: ""; position: absolute; left: 0; top: 5px; width: 15px; height: 15px; border: 1.5px solid var(--ink); border-radius: 3px; }
+
+/* Myths */
+.myth { padding: 18px 0; border-top: 1px solid var(--rule); }
+.myth .m { font-family: var(--display); font-size: 21px; line-height: 1.3; margin-bottom: 6px; }
+.myth .m::before { content: "Myth: "; font-style: italic; color: var(--muted); }
+.myth p { margin: 0; color: var(--ink-2); }
+
+dl.gloss { margin: 24px 0; }
+dl.gloss dt { font-weight: 600; margin-top: 16px; }
+dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
+
+.toc { list-style: none; padding: 0; margin: 28px 0 0; }
+.toc li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; padding: 12px 0; border-top: 1px solid var(--rule); margin: 0; }
+.toc .n { font-family: var(--mono); font-size: 13px; color: var(--blue); padding-top: 4px; }
+.toc a { color: var(--ink); text-decoration: none; font-family: var(--display); font-size: 21px; }
+.toc a:hover { color: var(--blue); }
+.toc small { display: block; color: var(--muted); font-size: 14px; font-family: var(--body); }
+
+.cta { padding-block: 72px; }
+.cta h2 { color: var(--on-ink); margin-bottom: 18px; }
+.cta p { color: #cfd0d6; }
+.btn { display: inline-block; background: var(--blue); color: #fff; text-decoration: none; padding: 14px 22px; border-radius: 8px; font-weight: 600; margin-top: 10px; }
+.btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.cta ul { color: #cfd0d6; }
+
+.sources { font-size: 14px; line-height: 1.55; padding-left: 22px; }
+.sources li { margin-bottom: 10px; }
+.cite { font-family: var(--mono); font-size: 13px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; line-height: 1.6; }
+
+@media (max-width: 560px) {
+  .stat { grid-template-columns: minmax(0, 1fr); }
+  .stat .src { grid-column: 1; }
+  .stat .big { font-size: 48px; }
+  .bar { grid-template-columns: minmax(0, 92px) minmax(0, 1fr) 50px; font-size: 13px; }
+  .opener .num { font-size: 88px; }
+}
+
+/* Print: US Letter report with full bleed cover and chapter openers */
+@page { size: Letter; margin: 0.7in 0.75in 0.8in;
+  @bottom-left { content: "Appear  ·  AI Search for Beginners"; font-family: "Geist Mono", monospace; font-size: 8pt; color: #8a8b95; }
+  @bottom-right { content: counter(page); font-family: "Geist Mono", monospace; font-size: 8pt; color: #8a8b95; }
+}
+@page full { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+@media print {
+  body { font-size: 10.25pt; line-height: 1.55; }
+  h3 { margin-top: 30px; }
+  .stat { margin: 24px 0; }
+  .wrap { max-width: none; padding: 0; }
+  .cover, .opener, .cta { page: full; break-before: page; height: 11in; display: flex; flex-direction: column; justify-content: center; }
+  .cover { break-before: auto; justify-content: space-between; padding: 0.9in 0.85in; }
+  .cover .wrap { height: 100%; align-content: space-between; }
+  .opener { justify-content: flex-end; padding: 0.9in 0.85in 1.1in; }
+  .cta { padding: 0.9in 0.85in; }
+  .opener .wrap, .cta .wrap { padding: 0; }
+  section.page { padding-block: 0; break-before: page; }
+  .opener + section.page { break-before: page; }
+  .band.tint { background: transparent; }
+  h3 { break-after: avoid; }
+  .stat, .chart, .note, .myth, .week h3, table, tr, .findings li, .engines div, .pull { break-inside: avoid; }
+  .table-wrap { overflow: visible; }
+  table { min-width: 0; }
+  a { color: var(--ink); }
+  .btn { color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<!-- COVER -->
+<header class="band ink cover">
+  <div class="wrap">
+    <div class="brand"><span class="mark" aria-hidden="true"></span>Appear</div>
+    <div style="display:grid;gap:22px">
+      <span class="eyebrow">Appear Research Report · 2026 Edition</span>
+      <h1>AI Search for <em>Beginners</em></h1>
+      <p class="sub">How ChatGPT became an acquisition channel, and the exact playbook to get your business recommended in it.</p>
+    </div>
+    <div class="chat" aria-label="Example of an AI assistant answer">
+      <span class="label">A buyer asks ChatGPT</span>
+      <div class="q">Who's the best company for this in my city?</div>
+      <div class="a">Here are three options people rate highly:
+        <ol>
+          <li>Northside Co. &nbsp;(4.9 stars, 212 reviews)</li>
+          <li class="you-row"><span class="you">Your business</span> &nbsp;(if AI can read you)</li>
+          <li>Riverbend Group &nbsp;(4.7 stars, 88 reviews)</li>
+        </ol>
+      </div>
+    </div>
+    <div class="cover-foot"><span>joinappear.com</span><span>Free guide · 12 chapters · ~40 min read</span></div>
+  </div>
+</header>
+
+<!-- ABOUT -->
+<section class="page">
+  <div class="wrap">
+    <span class="eyebrow">Before you start</span>
+    <h2 style="margin:10px 0 22px">Who this report is for</h2>
+    <p class="lede">You run a business, or you run marketing for one. You have heard that people now ask ChatGPT instead of Google, and you want to know three things: is it real, does it matter for me, and what do I actually do about it.</p>
+    <p>This report answers all three in plain English. No jargon you have to look up, no hype, and no guessing dressed up as fact. Every number in here has a source you can check, listed at the back. Where the research disagrees, we say so.</p>
+    <p>Read it front to back in about 40 minutes, or jump straight to <a href="#ch7">the 30 day playbook</a> if you just want the to do list.</p>
+
+    <h3>What you will walk away with</h3>
+    <ul>
+      <li>A clear picture of how AI assistants decide which businesses to recommend</li>
+      <li>The real data on whether AI search traffic is worth chasing (it is, but not for the reason most people think)</li>
+      <li>A simple way to measure your own AI visibility for free, this week</li>
+      <li>A week by week plan to start showing up in ChatGPT, Gemini, Perplexity and Claude</li>
+      <li>Industry playbooks for local services, B2B software and ecommerce</li>
+    </ul>
+
+    <div class="note">
+      <span class="eyebrow">Quoting this report</span>
+      <p>You are welcome to quote any finding or chart in this report in your own articles, decks and posts. Please credit <strong>Appear (joinappear.com)</strong> and link to the original source we cite. A ready made citation is on the <a href="#cite">last page</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENTS -->
+<section class="page">
+  <div class="wrap">
+    <span class="eyebrow">Contents</span>
+    <h2 style="margin-top:10px">What's inside</h2>
+    <ol class="toc">
+      <li><span class="n">00</span><div><a href="#findings">Key findings</a><small>The whole report on one page</small></div></li>
+      <li><span class="n">01</span><div><a href="#ch1">The new front page</a><small>How buyers find businesses now</small></div></li>
+      <li><span class="n">02</span><div><a href="#ch2">How AI search works</a><small>Answer engines in plain English</small></div></li>
+      <li><span class="n">03</span><div><a href="#ch3">How AI picks who to recommend</a><small>The six signals that decide it</small></div></li>
+      <li><span class="n">04</span><div><a href="#ch4">Is ChatGPT a real acquisition channel?</a><small>Traffic, conversion and the honest caveats</small></div></li>
+      <li><span class="n">05</span><div><a href="#ch5">Measuring AI visibility</a><small>Why clicks lie, and what to track instead</small></div></li>
+      <li><span class="n">06</span><div><a href="#ch6">GEO vs SEO</a><small>What carries over and what changes</small></div></li>
+      <li><span class="n">07</span><div><a href="#ch7">The 30 day playbook</a><small>Week by week, step by step</small></div></li>
+      <li><span class="n">08</span><div><a href="#ch8">Playbooks by business type</a><small>Local services, B2B software, ecommerce</small></div></li>
+      <li><span class="n">09</span><div><a href="#ch9">Nine myths to ignore</a><small>Things you will hear that are wrong</small></div></li>
+      <li><span class="n">10</span><div><a href="#ch10">Glossary</a><small>Every term, explained in one or two lines</small></div></li>
+      <li><span class="n">11</span><div><a href="#worksheet">Prompt audit worksheet</a><small>Benchmark yourself in an afternoon</small></div></li>
+      <li><span class="n">12</span><div><a href="#sources">Sources and how to cite</a><small>Every study, with links</small></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- KEY FINDINGS -->
+<section class="page band tint" id="findings">
+  <div class="wrap">
+    <span class="eyebrow">00 · Key findings</span>
+    <h2 style="margin:10px 0 14px">The whole report on one page</h2>
+    <p class="lede">If you only read one page, read this one.</p>
+    <ol class="findings">
+      <li><div><b>AI assistants are now a mainstream way to find businesses.</b><span>ChatGPT passed 800 million weekly users in late 2025, and Google says its AI Overviews reach more than 2 billion people a month.</span></div></li>
+      <li><div><b>The shortlist is made before anyone clicks.</b><span>When Google shows an AI summary, people click a regular result in 8% of searches, versus 15% when there is no summary (Pew Research Center).</span></div></li>
+      <li><div><b>AI answers name a handful of options, not ten pages of links.</b><span>If you are not in the answer, there is no page two to fall back on.</span></div></li>
+      <li><div><b>AI traffic is small but unusually valuable.</b><span>At Ahrefs, AI search sent about 0.5% of visitors but 12.1% of signups. Seer Interactive measured ChatGPT visitors converting at 15.9% against 1.76% for Google organic.</span></div></li>
+      <li><div><b>Most of the value never shows up as a click.</b><span>Buyers read the answer, then call you, search your name or type your address. Analytics files that as Direct or branded search.</span></div></li>
+      <li><div><b>AI recommends businesses it can read, understand and verify.</b><span>Six signals decide it: access, readability, relevance, specificity, corroboration and freshness.</span></div></li>
+      <li><div><b>Specific beats big.</b><span>Large brands win broad questions. Smaller businesses that answer narrow, specific questions directly often win those.</span></div></li>
+      <li><div><b>The right content changes moves the needle.</b><span>Princeton researchers found that adding statistics, quotations and cited sources raised visibility in AI answers by up to 40%. Keyword stuffing did not help.</span></div></li>
+      <li><div><b>One spot check proves nothing.</b><span>AI answers change from run to run. Visibility should be measured as a share of many answers, tracked over months.</span></div></li>
+      <li><div><b>It is still early.</b><span>Most businesses have not started. The ones who get readable and well corroborated now become the default names AI repeats.</span></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- CHAPTER 1 -->
+<div class="band ink opener" id="ch1">
+  <div class="wrap">
+    <span class="num">01</span>
+    <h2>The new front page</h2>
+    <p>For twenty years the front page of the internet was ten blue links. Now, more and more often, it is a single paragraph written by an AI.</p>
+  </div>
+</div>
+<section class="page">
+  <div class="wrap">
+    <p class="lede">Think about the last time you asked ChatGPT for a recommendation. Maybe a restaurant, a tool for work, a dentist for your kid. You probably did not get a list of twenty websites. You got an answer, with two or three names in it, and a reason for each.</p>
+    <p>That small change in behaviour is the biggest shift in how customers find businesses since Google itself. Your buyers are not just searching anymore. They are asking. And the thing they ask writes back a shortlist.</p>
+
+    <h3>How big is this, really?</h3>
+    <p>Big enough that it is no longer an early adopter thing.</p>
+
+    <div class="stat">
+      <div class="big">800M+</div>
+      <p class="what">Weekly ChatGPT users, as announced by OpenAI CEO Sam Altman in October 2025. Third party trackers report the number kept climbing through 2026.</p>
+      <div class="src">OpenAI DevDay, October 2025</div>
+    </div>
+    <div class="stat">
+      <div class="big">2B+</div>
+      <p class="what">Monthly users of Google's AI Overviews, the AI summary that now sits on top of many Google results. Google has since rolled out AI Mode, a full chat style search experience.</p>
+      <div class="src">Alphabet Q2 2025 earnings call</div>
+    </div>
+    <div class="stat">
+      <div class="big">25%</div>
+      <p class="what">The drop in traditional search engine volume that Gartner predicted for 2026, as people shift questions to AI chatbots and virtual agents.</p>
+      <div class="src">Gartner press release, February 2024</div>
+    </div>
+    <p>Gartner's forecast was a prediction, and plenty of people have argued about whether Google searches are really falling. That argument misses the point. Even when people still use Google, Google itself now answers with AI first. Whichever box your buyer types into, there is a good chance an AI writes the first thing they read.</p>
+
+    <h3>The click is disappearing</h3>
+    <p>In 2025, the Pew Research Center tracked the real browsing behaviour of 900 US adults across nearly 69,000 Google searches. The results are the clearest picture we have of what AI summaries do to clicks.</p>
+
+    <div class="chart" role="img" aria-label="Bar chart: people clicked a regular search result in 15% of searches without an AI summary and 8% with one">
+      <div class="title">How often people click a regular search result</div>
+      <div class="bars">
+        <div class="bar"><span>No AI summary</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="v">15%</span></div>
+        <div class="bar hi"><span>With AI summary</span><div class="track"><div class="fill" style="width:53.3%"></div></div><span class="v">8%</span></div>
+        <div class="bar hi"><span>Link inside summary</span><div class="track"><div class="fill" style="width:6.7%"></div></div><span class="v">1%</span></div>
+      </div>
+      <div class="cap">Source: Pew Research Center, July 2025. Share of searches where a link was clicked.</div>
+    </div>
+    <p>Pew also found that people were more likely to end their browsing session completely after seeing an AI summary (26% of the time, versus 16% without one). In other words, the AI answer was enough. They got what they needed and left.</p>
+
+    <p class="pull">The decision is moving from your website to the answer. If you are not in the answer, you are not in the decision.</p>
+
+    <h3>The three name problem</h3>
+    <p>Here is the part that should get every founder's attention. A Google results page has ten organic spots, plus ads, plus maps, plus page two. An AI answer usually names somewhere between two and five options.</p>
+    <p>That changes the maths of being found. In classic search, being number seven still got you some clicks. In AI search, there is no number seven. You are either one of the few names the AI repeats, or you are invisible for that question.</p>
+    <p>And the AI does not just list you. It describes you. It says who you are good for, what you cost, why someone might pick you over the others. That description becomes your first impression, written by someone else, before the buyer has ever seen your website.</p>
+
+    <h3>Why this is an opportunity, not just a threat</h3>
+    <p>It is easy to read all of this as bad news. It is not, for one simple reason: most businesses have not started.</p>
+    <p>Google SEO is a crowded, twenty year old fight where the big players have huge head starts. AI search is a few years old. The rules reward businesses that are clear, specific and easy to verify, which is something a small company can do just as well as a big one. Sometimes better.</p>
+    <p>The rest of this report shows you how.</p>
+  </div>
+</section>
+
+<!-- CHAPTER 2 -->
+<div class="band ink opener" id="ch2">
+  <div class="wrap">
+    <span class="num">02</span>
+    <h2>How AI search works</h2>
+    <p>You do not need to understand the technology. You do need to understand the two ways an AI builds its answer, because each one rewards different things.</p>
+  </div>
+</div>
+<section class="page">
+  <div class="wrap">
+    <h3 style="margin-top:0">Search engine versus answer engine</h3>
+    <p>A <strong>search engine</strong> like classic Google finds pages and ranks them. You get a list and do the reading yourself.</p>
+    <p>An <strong>answer engine</strong> like ChatGPT, Perplexity, Gemini, Claude or Google's AI Overviews does the reading for you. It looks at sources, decides what is true and useful, and writes a fresh answer in its own words. The sources might appear as small links beside the answer, or not at all.</p>
+    <p>That one difference explains almost everything else in this report. An answer engine needs to <em>understand</em> your business well enough to describe it confidently. Being on the page is not enough. It has to be able to read you, trust you and repeat you.</p>
+
+    <h3>The two routes to an answer</h3>
+    <p>Every time someone asks a question, the answer engine picks one of two routes, or mixes them.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Route</th><th>How it works</th><th>Who it favours</th><th>How fast changes show up</th></tr></thead>
+        <tbody>
+          <tr><td>Memory</td><td>The model answers from what it learned during training, without searching</td><td>Brands that were already famous and widely written about</td><td>Slow. Months, on the model maker's schedule</td></tr>
+          <tr><td>Live search</td><td>The engine searches the web, reads the pages it finds, then writes the answer from them</td><td>Businesses with clear, readable, specific pages that match the question</td><td>Fast. Sometimes days, as soon as your page is read</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>For questions about current options, prices, locations or "best" lists, most engines now lean on live search. That is good news. It means the work you do on your own website and your online reputation can show up in answers within weeks, not years.</p>
+
+    <h3>One question becomes many searches</h3>
+    <p>Here is something most people do not realise. When you ask an AI a question, it often runs several searches behind the scenes. Google calls this "query fan out".</p>
+    <p>Ask "what's the best accounting software for a small agency" and the engine might quietly search for agency accounting software, small business accounting comparisons, accounting software pricing, and reviews of specific tools. Then it blends what it found into one answer.</p>
+    <p>So you are not trying to rank for one keyword. You are trying to be the business that keeps showing up across all the little searches that sit behind a real buyer question.</p>
+
+    <h3>Every answer is written fresh</h3>
+    <p>Ask ChatGPT the same question twice and you may get two different lists. That is normal. Answers are generated word by word with some randomness built in, live searches return slightly different pages each day, small changes in phrasing lead to different searches, and some engines personalise based on the person asking.</p>
+    <p>This matters for one big reason: <strong>a single check tells you almost nothing</strong>. We come back to this in Chapter 5.</p>
+
+    <h3>Meet the engines</h3>
+    <p>They all work on the same basic idea, but each has its own personality.</p>
+    <div class="engines">
+      <div><b>ChatGPT</b><span>The biggest by far and the source of most AI referral traffic. Strong on recommendation and shortlist questions. Rewards full context, clear product facts and FAQs.</span></div>
+      <div><b>Google AI Overviews and AI Mode</b><span>Sits on top of the world's biggest search engine. Leans on Google's index, structured data and entity understanding.</span></div>
+      <div><b>Gemini</b><span>Google's assistant app. Shares much of Google's view of the web, including your Google Business Profile and reviews.</span></div>
+      <div><b>Perplexity</b><span>Built for research. Shows its sources prominently and favours quote ready answers and fresh pages.</span></div>
+      <div><b>Claude</b><span>Popular for work and vendor evaluation. Rewards clean structure, direct explanations and honest comparisons.</span></div>
+      <div><b>Copilot and Meta AI</b><span>Built into Windows, Office, WhatsApp, Instagram and Facebook. Smaller as referral sources, huge in reach.</span></div>
+    </div>
+    <div class="note">
+      <span class="eyebrow">The good news</span>
+      <p>You do not need a separate strategy for each engine. The same foundations (be readable, be specific, be corroborated) help across all of them.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 3 -->
+<div class="band ink opener" id="ch3">
+  <div class="wrap">
+    <span class="num">03</span>
+    <h2>How AI picks who to recommend</h2>
+    <p>No AI company publishes its full recipe. But across all the major engines, the pattern is consistent enough to act on.</p>
+  </div>
+</div>
+<section class="page">
+  <div class="wrap">
+    <p class="lede">Answer engines recommend the businesses they can find, read and describe with confidence for the specific question being asked. That comes down to six signals.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Signal</th><th>The question the AI is asking</th><th>What you can do</th></tr></thead>
+        <tbody>
+          <tr><td>Access</td><td>Can I reach this website at all?</td><td>Let AI crawlers in. Check your robots file and your security settings</td></tr>
+          <tr><td>Readability</td><td>Can I read the content as plain text?</td><td>Make sure key facts are not locked inside JavaScript, images or video</td></tr>
+          <tr><td>Relevance</td><td>Does a page directly answer this exact question?</td><td>Write pages that answer the questions buyers actually ask, in their words</td></tr>
+          <tr><td>Specificity</td><td>Can I say something concrete about this business?</td><td>State services, locations, prices, specialties and credentials plainly</td></tr>
+          <tr><td>Corroboration</td><td>Do other sources agree?</td><td>Keep reviews, directories and listings accurate, consistent and active</td></tr>
+          <tr><td>Freshness</td><td>Is this information current?</td><td>Update dates, figures, offers and team details when they change</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Access and readability come first</h3>
+    <p>An AI cannot recommend what it cannot read. This sounds obvious, but it is where most businesses quietly fail.</p>
+    <p>Many modern websites load their content with JavaScript, the code that makes pages interactive. Your browser runs that code and shows you a beautiful page. Many AI crawlers do not run it. They see a near empty page with a logo and a cookie banner. A 2024 analysis by Vercel and MERJ of billions of crawler requests found that the major AI crawlers, including OpenAI's and Anthropic's, did not render JavaScript at all.</p>
+    <p>On top of that, many security tools now block AI crawlers by default. In July 2025, Cloudflare, which sits in front of a large share of the web, began blocking AI crawlers by default for new sites. Plenty of businesses are invisible to AI and have no idea, because their website looks perfectly fine to humans.</p>
+
+    <h3>Relevance is judged question by question</h3>
+    <p>There is no overall "AI score" for your company. Every question is judged on its own.</p>
+    <p>You can be the obvious answer to "commercial roofer in Dallas" and completely absent from "who repairs flat roofs on warehouses in Dallas", simply because no page on your site talks about warehouses or flat roofs. The AI is not being unfair. It just has nothing to quote.</p>
+
+    <h3>Specific beats impressive</h3>
+    <p>AI needs facts it can repeat. Compare these two lines from a roofing company's homepage:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Vague</th><th>Specific</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:400">Industry leading quality and unmatched service for all your roofing needs.</td><td style="font-weight:400">Flat commercial roofs in Dallas and Fort Worth since 2009. 20 year workmanship warranty. Most repairs quoted within 48 hours.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The first line gives the AI nothing. The second gives it a location, a specialty, a track record, a guarantee and a speed promise, all things it can say to a buyer. Marketing fluff does not just fail to help in AI search. It actively wastes the space where facts should be.</p>
+
+    <h3>Corroboration builds confidence</h3>
+    <p>AI engines do not just take your word for it. They check what other sources say: reviews, directories, comparison articles, forums like Reddit, press, industry sites. When many sources agree about you, you become a safe name to recommend. When your own website is the only place a claim appears, it carries much less weight.</p>
+    <p>This is also why review sites and "best of" lists show up in so many AI answers. They exist to answer "who is the best" questions, and they are heavily corroborated. Being well represented on them helps you twice: directly, and as a signal.</p>
+
+    <h3>What the research says actually works</h3>
+    <p>The best known study on this is "GEO: Generative Engine Optimization" by researchers at Princeton and partners, published at the KDD 2024 conference. They tested different ways of rewriting web content and measured how visible that content became inside AI generated answers.</p>
+    <div class="stat">
+      <div class="big">Up to 40%</div>
+      <p class="what">Boost in visibility inside AI answers from adding things like statistics, quotations and cited sources to content. Simple keyword stuffing did not help, and in some tests made things worse.</p>
+      <div class="src">Aggarwal et al., KDD 2024</div>
+    </div>
+    <p>The "up to" matters: that is the best result, not the average. But the direction is clear and matches what we see in practice. AI engines reward content that is useful to quote. Facts, numbers, named sources and clear answers win. Repetition and fluff lose.</p>
+
+    <h3>What does not decide it</h3>
+    <ul>
+      <li><strong>Repeating keywords.</strong> AI works with meaning, not word counts.</li>
+      <li><strong>Website design.</strong> A beautiful site that machines cannot read loses to a plain one that states facts clearly.</li>
+      <li><strong>Size alone.</strong> Big brands win broad questions. On specific questions, smaller businesses that answer directly often win.</li>
+      <li><strong>Ad spend.</strong> Some assistants have started testing labelled ads, but the regular answer itself cannot be bought.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- CHAPTER 4 -->
+<div class="band ink opener" id="ch4">
+  <div class="wrap">
+    <span class="num">04</span>
+    <h2>Is ChatGPT a real acquisition channel?</h2>
+    <p>The short answer: the volume is small, the quality is high, and the biggest effect is the one your analytics cannot see.</p>
+  </div>
+</div>
+<section class="page">
+  <div class="wrap">
+    <h3 style="margin-top:0">The volume is still small</h3>
+    <p>Let's be straight about this. For most websites today, AI assistants send a small slice of total traffic. Depending on whose data you look at, AI referrals make up somewhere between a fraction of a percent and around one percent of all website visits. Google search still sends far more for most businesses.</p>
+    <p>But it is growing fast. Adobe found that traffic from AI sources to US retail websites grew about 1,200% between July 2024 and February 2025. ChatGPT sends the biggest share of AI referrals by a wide margin, followed by Perplexity, Gemini, Copilot and Claude.</p>
+
+    <h3>The quality is unusually high</h3>
+    <p>This is where it gets interesting. When people do click through from an AI answer, they behave very differently from a normal search visitor.</p>
+    <div class="stat">
+      <div class="big">0.5% → 12.1%</div>
+      <p class="what">At Ahrefs, AI search visitors made up about half a percent of traffic but drove 12.1% of signups. That works out to roughly 23 times more valuable per visit than the average visitor.</p>
+      <div class="src">Ahrefs, 2025</div>
+    </div>
+
+    <div class="chart" role="img" aria-label="Bar chart of conversion rate by traffic source: ChatGPT 15.9%, Perplexity 10.5%, Claude 5%, Gemini 3%, Google organic 1.76%">
+      <div class="title">Conversion rate by traffic source</div>
+      <div class="bars">
+        <div class="bar hi"><span>ChatGPT</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="v">15.9%</span></div>
+        <div class="bar hi"><span>Perplexity</span><div class="track"><div class="fill" style="width:66%"></div></div><span class="v">10.5%</span></div>
+        <div class="bar hi"><span>Claude</span><div class="track"><div class="fill" style="width:31.4%"></div></div><span class="v">5.0%</span></div>
+        <div class="bar hi"><span>Gemini</span><div class="track"><div class="fill" style="width:18.9%"></div></div><span class="v">3.0%</span></div>
+        <div class="bar"><span>Google organic</span><div class="track"><div class="fill" style="width:11.1%"></div></div><span class="v">1.76%</span></div>
+      </div>
+      <div class="cap">Source: Seer Interactive, 2025. Conversion rates measured on one client's website, so treat as directional.</div>
+    </div>
+
+    <p>Adobe saw the same pattern in retail. Visitors arriving from AI sources stayed longer, viewed more pages and bounced less than visitors from other channels. And in Appear's own customer data, AI search clicks convert at roughly 14 times the rate of a typical Google click.</p>
+
+    <h3>Why AI visitors convert so well</h3>
+    <p>Because the AI already did the comparison shopping.</p>
+    <p>A Google visitor is often still browsing. They opened five tabs and yours is one of them. An AI visitor has usually asked a detailed question, read a reasoned answer, and been told your business is a good fit for exactly what they need. By the time they land on your site, the shortlist is done and you are on it. They are not researching anymore. They are checking you out before they buy.</p>
+    <p class="pull">A Google click is a maybe. A click from an AI recommendation is closer to a referral from a trusted friend.</p>
+
+    <h3>The honest caveats</h3>
+    <p>Not every study agrees, and you should know that before you build a plan around a single number.</p>
+    <ul>
+      <li>Some datasets show AI visitors converting at similar or even lower rates than Google, especially in categories where people use AI for research but buy elsewhere.</li>
+      <li>The size of the gap depends a lot on how "conversion" is defined, what industry is measured, and how AI traffic is tracked.</li>
+      <li>Many headline numbers come from a single company's website.</li>
+    </ul>
+    <p>The direction across most studies is consistent: fewer visits, higher intent. Use that as your working assumption, then measure your own.</p>
+
+    <h3>The value you cannot see</h3>
+    <p>Here is what the traffic numbers miss entirely. Most of the value of an AI recommendation never shows up as a click.</p>
+    <p>A buyer asks ChatGPT for the best med spa nearby. Your name is in the answer. They do not click anything. They pick up the phone, or search your name on Google, or walk in on Saturday. Your analytics records a phone call, a branded search or a direct visit. Nothing says "AI".</p>
+    <p>That is why judging AI search by referral traffic alone will always undersell it. The click is the smallest part of what happens.</p>
+
+    <div class="stat">
+      <div class="big">+40%</div>
+      <p class="what">Average increase in AI referred traffic that Appear customers see within 90 days, with most live on Appear the same day they start.</p>
+      <div class="src">Appear customer data</div>
+    </div>
+
+    <h3>So, is it worth it?</h3>
+    <p>For most businesses, yes, and the case gets stronger every month. You are not choosing AI search instead of Google. You are adding a second surface where buyers make decisions, one where the competition is still thin, the visitors are pre sold, and being early compounds. The businesses AI learns to trust now are the ones it will keep naming later.</p>
+  </div>
+</section>
+
+<!-- CHAPTER 5 -->
+<div class="band ink opener" id="ch5">
+  <div class="wrap">
+    <span class="num">05</span>
+    <h2>Measuring AI visibility</h2>
+    <p>If you measure AI search the way you measure Google, you will get the wrong answer. Here is what to track instead.</p>
+  </div>
+</div>
+<section class="page">
+  <div class="wrap">
+    <h3 style="margin-top:0">Why your analytics undercount AI</h3>
+    <ul>
+      <li><strong>Missing referrer data.</strong> When someone taps a link inside an AI app, especially on mobile, the visit often arrives without saying where it came from. Your analytics files it as Direct.</li>
+      <li><strong>Visits that happen later.</strong> Someone reads an answer naming you and visits tomorrow by typing your name into Google. That counts as branded search.</li>
+      <li><strong>No visit at all.</strong> They read the answer and call you. No analytics tool sees it.</li>
+    </ul>
+    <div class="note">
+      <span class="eyebrow">Tip</span>
+      <p>If your Direct traffic or branded searches are rising and you cannot explain why, AI assistants may be the reason. It will never be labelled that way in your reports.</p>
+    </div>
+
+    <h3>The metric that matters: citation share</h3>
+    <p>The most direct measure of AI visibility does not depend on clicks at all. It asks a simple question: when buyers ask about what you sell, how often are you named?</p>
+    <p>That number is called <strong>citation share</strong>. Because AI answers change from run to run, you measure it by sampling. Ask the same set of buyer questions several times, across several engines, and count how often you appear.</p>
+    <pre>citation share = answers that name you ÷ total answers checked
+
+Example:
+20 buyer questions × 4 engines × 3 runs = 240 answers
+You were named in 36 of them
+Citation share = 36 ÷ 240 = 15%</pre>
+    <p>Do the same for your top three competitors and you have something far more useful than any traffic report: a picture of who owns the AI conversation in your category, and where the gaps are.</p>
+
+    <h3>What counts as a citation (and what does not)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>What it looks like</th><th>Worth</th></tr></thead>
+        <tbody>
+          <tr><td>Named mention</td><td>Your business is named in the text of the answer</td><td>High. The buyer reads your name at the moment of decision</td></tr>
+          <tr><td>Linked source</td><td>Your page appears as a source link beside the answer</td><td>Medium. Shows trust and sends some clicks, but your name may go unnoticed</td></tr>
+          <tr><td>Both</td><td>Named and linked as the source</td><td>Highest. Seen, trusted and clickable</td></tr>
+          <tr><td>Brand search</td><td>You asked "tell me about [your company]"</td><td>None. It only proves you exist, not that you get recommended</td></tr>
+          <tr><td>Inside a list</td><td>The answer cites a "top 10" article that includes you</td><td>Low. The article got the citation, not you</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The test for a citation that matters: a buyer asked a real question, did not mention you, and your name came back in the answer. Position and description matter too. Being named first as "the specialist" is worth far more than being named fourth as "a budget option".</p>
+
+    <h3>Your AI visibility scorecard</h3>
+    <p>Track these five things monthly. Together they give you an honest picture.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Signal</th><th>Where to find it</th></tr></thead>
+        <tbody>
+          <tr><td>Citation share</td><td>Sample your buyer questions across engines (see the worksheet in this report), or use a tracking tool</td></tr>
+          <tr><td>AI referral visits</td><td>Analytics referral sources: chatgpt.com, perplexity.ai, gemini.google.com, claude.ai, copilot.microsoft.com</td></tr>
+          <tr><td>Direct traffic trend</td><td>Analytics. Watch for unexplained growth</td></tr>
+          <tr><td>Branded search volume</td><td>Google Search Console, queries containing your name</td></tr>
+          <tr><td>Self reported source</td><td>Add "ChatGPT or another AI assistant" to your "How did you hear about us?" field</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Quick setup: an AI channel in Google Analytics 4</h4>
+    <p>In GA4, go to Admin, then Data display, then Channel groups. Create a new channel called "AI Assistants" where the session source matches this pattern, and move it above Referral so it gets picked first:</p>
+    <pre>chatgpt\.com|openai\.com|perplexity\.ai|gemini\.google\.com|claude\.ai|copilot\.microsoft\.com|meta\.ai</pre>
+
+    <h3>Read trends, not snapshots</h3>
+    <p>A change between two checks on the same day is noise. A change that holds over weeks is real. Judge your progress over a quarter, not a morning. And be suspicious of anyone who reports AI visibility to two decimal places. Any honest measure is a sample, not a count.</p>
+  </div>
+</section>
+
+<!-- CHAPTER 6 -->
+<div class="band ink opener" id="ch6">
+  <div class="wrap">
+    <span class="num">06</span>
+    <h2>GEO vs SEO</h2>
+    <p>SEO gets you onto the list of sources. GEO gets you into the sentence.</p>
+  </div>
+</div>
+<section class="page">
+  <div class="wrap">
+    <h3 style="margin-top:0">First, the alphabet soup</h3>
+    <p>You will see several names for the same idea: <strong>GEO</strong> (generative engine optimization), <strong>AEO</strong> (answer engine optimization), <strong>AI SEO</strong>, <strong>LLM optimization</strong> and <strong>AI visibility</strong>. They all mean the work of getting your business found, understood and recommended by AI assistants. In this report we use GEO and AI visibility.</p>
+
+    <h3>What is the same</h3>
+    <p>Good SEO is a solid foundation for GEO. Many answer engines run live web searches before they answer, so pages that are crawlable, fast, well structured and already ranking get read more often. Strong reviews, a good reputation and helpful content help in both worlds. If you have invested in SEO, that work is not wasted. It is a head start.</p>
+
+    <h3>What is different</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Classic SEO</th><th>GEO / AI visibility</th></tr></thead>
+        <tbody>
+          <tr><td>The goal</td><td>Rank high in a list of links</td><td>Be named and described in the answer</td></tr>
+          <tr><td>The unit</td><td>Keywords</td><td>Real buyer questions, in many phrasings</td></tr>
+          <tr><td>Winning looks like</td><td>Position 1 to 3 on page one</td><td>A high share of answers that name you</td></tr>
+          <tr><td>Value without a click</td><td>Almost none</td><td>A lot. The mention itself influences the buyer</td></tr>
+          <tr><td>Who reads your page</td><td>A human who clicked</td><td>A machine summarising for a human who may never visit</td></tr>
+          <tr><td>What content wins</td><td>Comprehensive, keyword matched pages</td><td>Direct answers, specific facts, data, quotes and comparisons</td></tr>
+          <tr><td>Third party signals</td><td>Backlinks</td><td>Mentions, reviews, listings and consistent descriptions everywhere</td></tr>
+          <tr><td>Tracking</td><td>Rank trackers, clicks</td><td>Sampling many answers over time</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Write for extraction</h3>
+    <p>The biggest practical shift is how you write. A human skims your page. An AI pulls out pieces of it to use in an answer. So structure every important page so that the useful bits are easy to lift out:</p>
+    <ul>
+      <li>Answer the question in the first one or two sentences, then explain.</li>
+      <li>Use clear headings that match how people actually ask.</li>
+      <li>Put facts in plain text: prices, locations, hours, specialties, numbers.</li>
+      <li>Use tables for comparisons and lists for steps.</li>
+      <li>Back up claims with data, named sources or quotes.</li>
+      <li>Add a visible "last updated" date.</li>
+    </ul>
+
+    <h3>Do you still need an SEO agency?</h3>
+    <p>Probably, if Google sends you meaningful business today. GEO does not replace SEO. It adds a layer SEO was never built for. The two work best together: SEO keeps you in the index the AI searches, and GEO makes sure the AI can read, trust and repeat what it finds.</p>
+  </div>
+</section>
+
+<!-- CHAPTER 7 -->
+<div class="band ink opener" id="ch7">
+  <div class="wrap">
+    <span class="num">07</span>
+    <h2>The 30 day playbook</h2>
+    <p>Four weeks, one focus per week. You can do all of this yourself. Each week builds on the last.</p>
+  </div>
+</div>
+<section class="page">
+  <div class="wrap">
+    <div class="week" style="margin-top:0">
+      <span class="eyebrow">Week 1</span>
+      <h3>Find your questions and benchmark yourself</h3>
+      <p>You cannot improve what you have not measured. Start by writing down the questions your buyers actually ask an AI before they buy. Aim for 20 to 30, spread across four types:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Best of</td><td>"What's the best CRM for a 10 person real estate team?"</td></tr>
+            <tr><td>Comparison</td><td>"Is [competitor] or [you] better for small agencies?"</td></tr>
+            <tr><td>Problem</td><td>"How do I stop leads going cold after a website form?"</td></tr>
+            <tr><td>Specific or local</td><td>"Who does emergency tree removal in north Austin on weekends?"</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="check">
+        <li>Ask your sales team and look at real customer emails, calls and reviews for the exact words buyers use</li>
+        <li>Run each question in ChatGPT, Gemini, Perplexity and Claude, three times each, in a fresh chat with no history</li>
+        <li>Log who gets named, in what order, and how each is described (use the worksheet at the back)</li>
+        <li>Calculate your citation share and your top three competitors' share</li>
+        <li>Note any facts the AI gets wrong about you. Those are urgent fixes</li>
+      </ul>
+    </div>
+
+    <div class="week">
+      <span class="eyebrow">Week 2</span>
+      <h3>Make sure AI can actually read you</h3>
+      <p>This is the least glamorous week and often the one with the biggest payoff. If AI cannot get in or cannot read what it finds, nothing else matters.</p>
+      <ul class="check">
+        <li><strong>Check your robots file</strong> (yoursite.com/robots.txt). Make sure you are not blocking the crawlers that power AI search, such as OAI-SearchBot and ChatGPT-User (OpenAI), PerplexityBot, Claude-SearchBot and Claude-User (Anthropic), Googlebot and Bingbot</li>
+        <li><strong>Check your security settings.</strong> Ask whoever runs your website or hosting whether bot protection is blocking AI crawlers. Many tools now do this by default</li>
+        <li><strong>Do the "view source" test.</strong> Open a key page, right click, choose View Page Source, and search for an important sentence. If you cannot find your main content there, many AI crawlers cannot either</li>
+        <li><strong>Add structured data</strong> (schema markup) that labels your business, products, services, reviews and FAQs in a machine readable way</li>
+        <li><strong>Keep your sitemap current</strong> so new and updated pages get found faster</li>
+        <li><strong>Get key facts out of images and PDFs.</strong> Pricing tables, menus and service lists should exist as real text</li>
+      </ul>
+      <div class="note">
+        <span class="eyebrow">A note on training crawlers</span>
+        <p>Some crawlers collect data to train future models (like GPTBot) and others fetch pages to answer questions right now (like OAI-SearchBot). You can make a different choice for each. If you want to be recommended, do not block the ones that power search and answers.</p>
+      </div>
+    </div>
+
+    <div class="week">
+      <span class="eyebrow">Week 3</span>
+      <h3>Answer the questions you are missing</h3>
+      <p>Go back to your Week 1 list. For every question where competitors get named and you do not, ask: do I have a page that directly answers this? Usually the answer is no.</p>
+      <ul class="check">
+        <li><strong>Create one clear page per important question.</strong> Lead with a direct answer in the first two sentences</li>
+        <li><strong>Make your service and product pages specific.</strong> Who it is for, where you serve, what it costs (or a range), how long it takes, what makes you different</li>
+        <li><strong>Publish honest comparison pages.</strong> "[You] vs [competitor]" and "best alternatives to [competitor]" pages are some of the most cited content types. Be fair. AI rewards balance</li>
+        <li><strong>Add real FAQs</strong> using your customers' actual words, not marketing questions nobody asks</li>
+        <li><strong>Add proof.</strong> Statistics, customer results, named sources and quotes. Remember the Princeton finding: this is what makes content quotable</li>
+        <li><strong>Date everything</strong> and update pages when facts change</li>
+      </ul>
+    </div>
+
+    <div class="week">
+      <span class="eyebrow">Week 4</span>
+      <h3>Get corroborated around the web</h3>
+      <p>Now make sure the rest of the internet agrees with what your website says.</p>
+      <ul class="check">
+        <li><strong>Clean up your listings.</strong> Google Business Profile, Bing Places, Apple Business Connect, Yelp, and the directories that matter in your industry (G2 and Capterra for software, Healthgrades and Zocdoc for healthcare, Houzz and Angi for home services)</li>
+        <li><strong>Use the same description everywhere.</strong> Same name, same services, same locations, same one line summary</li>
+        <li><strong>Ask for reviews that mention specifics.</strong> "They fixed our flat warehouse roof in two days" helps far more than "Great service!"</li>
+        <li><strong>Get onto the lists AI already cites.</strong> Look at which "best of" articles show up as sources in your Week 1 answers, and pitch to be included</li>
+        <li><strong>Show up in communities.</strong> Answer questions genuinely on Reddit, Quora and industry forums. AI engines read these heavily</li>
+        <li><strong>Publish something others will quote.</strong> Original data, a survey, a benchmark or a report. Research that other sites cite earns links, press, Google traffic and mentions inside AI answers, all at once</li>
+      </ul>
+    </div>
+
+    <h3>Day 31 and beyond</h3>
+    <p>Rerun your Week 1 benchmark every month with the same questions. Expect the first movement within a few weeks on engines that use live search, and slower changes in answers that come from a model's memory. Judge the trend over a quarter. Then keep going: add new questions, fill new gaps, and keep your facts fresh.</p>
+    <p class="pull">You cannot control any single answer. You can become the business that is easiest to name, across many questions and many runs.</p>
+  </div>
+</section>
+
+<!-- CHAPTER 8 -->
+<div class="band ink opener" id="ch8">
+  <div class="wrap">
+    <span class="num">08</span>
+    <h2>Playbooks by business type</h2>
+    <p>The six signals apply to everyone. What changes is which questions matter and where your corroboration lives.</p>
+  </div>
+</div>
+<section class="page">
+  <div class="wrap">
+    <h3 style="margin-top:0">Local services</h3>
+    <p>Dentists, med spas, chiropractors, law firms, roofers, landscapers, cleaners, remodelers.</p>
+    <p><strong>Questions to track:</strong> "best [service] in [city]", "[service] near [neighbourhood] open on weekends", "who does [specific job] in [city]", "affordable [service] in [city] with good reviews".</p>
+    <h4>What moves the needle</h4>
+    <ul>
+      <li>A complete, active Google Business Profile with accurate categories, hours, services and photos. Gemini and AI Overviews lean on it heavily</li>
+      <li>Steady, recent reviews that mention specific services and neighbourhoods</li>
+      <li>One page per core service, and pages for each area you serve, with real local detail</li>
+      <li>Plain text prices or price ranges, insurance accepted, credentials, years in business</li>
+    </ul>
+    <div class="note">
+      <span class="eyebrow">What we see again and again</span>
+      <p>When we ask ChatGPT for the best provider in a city, it regularly recommends businesses with far fewer Google reviews than the ones it leaves out. Reviews matter, but they are not enough. The businesses that get named are the ones the AI can read and describe clearly.</p>
+    </div>
+
+    <h3>B2B software and services</h3>
+    <p><strong>Questions to track:</strong> "best [category] tool for [company type]", "[competitor] alternatives", "[you] vs [competitor]", "how to [solve problem your product solves]", "[category] that integrates with [popular tool]".</p>
+    <h4>What moves the needle</h4>
+    <ul>
+      <li>Honest comparison and alternatives pages for every major competitor</li>
+      <li>Public pricing, or at least a clear range and what drives it</li>
+      <li>Use case pages by industry and company size</li>
+      <li>Integration pages and public documentation that crawlers can read</li>
+      <li>A strong presence on G2, Capterra and TrustRadius, plus mentions in industry roundups and newsletters</li>
+      <li>Original research your category quotes. It is the single best way to become the source AI cites</li>
+    </ul>
+
+    <h3>Ecommerce and consumer brands</h3>
+    <p><strong>Questions to track:</strong> "best [product] for [use case]", "[product] under [price]", "[brand] vs [brand]", "is [your product] worth it", "gift ideas for [person]".</p>
+    <h4>What moves the needle</h4>
+    <ul>
+      <li>Product pages where specs, materials, sizing, price and stock are readable as text, not just in images or scripts</li>
+      <li>Product structured data, including reviews and ratings</li>
+      <li>Buying guides that answer real questions, written for the use case not the keyword</li>
+      <li>Reviews on your own site and on marketplaces, plus coverage in gift guides and roundups AI already cites</li>
+    </ul>
+    <p>Appear customer Ultracker, a consumer app, had more than 40,000 product cards that AI crawlers could not read because they were loaded with JavaScript. Once those cards were made readable, AI search could finally see and cite the full catalogue. A Swiss luxury watch retailer got 11 premium watch brands indexed by AI with zero code changes to its site.</p>
+
+    <h3>Agencies</h3>
+    <p>If you run an SEO, marketing or web agency, AI visibility is both a new service line and a retention tool. Your clients are already asking "why doesn't ChatGPT mention us?" Agencies that can answer that question, measure it and fix it are winning new business on the strength of it.</p>
+  </div>
+</section>
+
+<!-- CHAPTER 9 -->
+<div class="band ink opener" id="ch9">
+  <div class="wrap">
+    <span class="num">09</span>
+    <h2>Nine myths to ignore</h2>
+    <p>AI search is new enough that a lot of confident advice is simply wrong. Here is what to tune out.</p>
+  </div>
+</div>
+<section class="page">
+  <div class="wrap">
+    <div class="myth" style="border-top:0;padding-top:0"><div class="m">AI search is a fad.</div><p>Hundreds of millions of people use AI assistants every week, and Google has put AI at the top of its own results. This is how search works now.</p></div>
+    <div class="myth"><div class="m">If I rank on Google, I'll show up in ChatGPT.</div><p>Ranking helps, but it is no guarantee. AI judges each question on its own, needs to read your content as text, and weighs what other sources say about you. Plenty of page one businesses never get named.</p></div>
+    <div class="myth"><div class="m">I checked once and we were mentioned, so we're fine.</div><p>One answer is one sample. Run the same question again and you may vanish. Measure your share across many runs and engines.</p></div>
+    <div class="myth"><div class="m">Only big brands get recommended.</div><p>Big brands win broad questions. Specific questions often go to smaller businesses that answer them directly.</p></div>
+    <div class="myth"><div class="m">Adding an llms.txt file will fix it.</div><p>An llms.txt file is a proposed standard, and it does no harm. But no major AI search engine has confirmed it uses one to decide who to recommend. It is not a strategy on its own.</p></div>
+    <div class="myth"><div class="m">More keywords means more visibility.</div><p>The Princeton research found keyword stuffing did not help, and sometimes hurt. AI understands meaning. Write clearly and specifically.</p></div>
+    <div class="myth"><div class="m">Blocking AI crawlers protects my business.</div><p>Blocking training crawlers is a reasonable choice for some publishers. Blocking the crawlers that power AI search just removes you from the answers your buyers read.</p></div>
+    <div class="myth"><div class="m">AI traffic is too small to matter.</div><p>The clicks are small. The influence is not. Most AI driven buyers never click. They call, walk in or search your name, and the ones who do click convert far better than average.</p></div>
+    <div class="myth"><div class="m">You can pay to be the recommended answer.</div><p>Some assistants are starting to test ads, but they are labelled and separate. The regular answer is earned through being readable, specific and well corroborated.</p></div>
+  </div>
+</section>
+
+<!-- CHAPTER 10 -->
+<div class="band ink opener" id="ch10">
+  <div class="wrap">
+    <span class="num">10</span>
+    <h2>Glossary</h2>
+    <p>Every term in this report, explained in plain English.</p>
+  </div>
+</div>
+<section class="page">
+  <div class="wrap">
+    <dl class="gloss" style="margin-top:0">
+      <dt>AI crawler</dt><dd>A bot that visits websites on behalf of an AI company, either to collect training data or to fetch pages to answer a question right now.</dd>
+      <dt>AI Overviews</dt><dd>The AI written summary Google shows above many regular search results.</dd>
+      <dt>AI Mode</dt><dd>Google's full chat style search experience, where the whole result is an AI conversation.</dd>
+      <dt>AI referral traffic</dt><dd>Website visits that come from clicking a link inside an AI assistant.</dd>
+      <dt>AI visibility</dt><dd>How often, and how well, AI assistants name and describe your business when buyers ask relevant questions.</dd>
+      <dt>Answer engine</dt><dd>A tool that writes an answer instead of returning a list of links. ChatGPT, Gemini, Perplexity, Claude and AI Overviews are all answer engines.</dd>
+      <dt>AEO</dt><dd>Answer engine optimization. Another name for GEO.</dd>
+      <dt>Citation</dt><dd>When an AI names your business or uses your page as a source in an answer.</dd>
+      <dt>Citation share</dt><dd>The percentage of sampled AI answers, for your buyer questions, that name you. The core AI visibility metric.</dd>
+      <dt>Corroboration</dt><dd>Other sources (reviews, directories, articles, forums) saying the same thing about you that your website says.</dd>
+      <dt>GEO</dt><dd>Generative engine optimization. The work of getting your business found, understood and recommended by AI assistants.</dd>
+      <dt>Large language model (LLM)</dt><dd>The technology underneath AI assistants. It learns patterns from huge amounts of text and generates new text.</dd>
+      <dt>Live search (retrieval)</dt><dd>When an AI searches the web and reads pages before answering, instead of answering from memory.</dd>
+      <dt>Prompt</dt><dd>The question or instruction a person types into an AI assistant.</dd>
+      <dt>Query fan out</dt><dd>When an AI quietly runs several related searches to answer one question.</dd>
+      <dt>Robots file (robots.txt)</dt><dd>A small file on your website that tells crawlers which pages they may visit.</dd>
+      <dt>Schema markup (structured data)</dt><dd>Hidden labels in your page code that tell machines exactly what things are: a business, a product, a price, a review, an FAQ.</dd>
+      <dt>Training data</dt><dd>The text a model learned from before it was released. Changes to your website reach it only when a new model is trained.</dd>
+      <dt>Zero click search</dt><dd>A search where the person gets what they need from the results page or AI answer and never visits a website.</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- WORKSHEET -->
+<section class="page band tint" id="worksheet">
+  <div class="wrap">
+    <span class="eyebrow">11 · Worksheet</span>
+    <h2 style="margin:10px 0 14px">Prompt audit worksheet</h2>
+    <p>Use this to run your Week 1 benchmark. Copy it into a spreadsheet, one row per question per engine. Use a fresh chat each time, and run each question three times.</p>
+    <div class="table-wrap">
+      <table class="worksheet">
+        <thead><tr><th>Buyer question</th><th>Engine</th><th>Named? (runs out of 3)</th><th>Position</th><th>How described</th><th>Who else was named</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--muted)">Best family dentist in Plano</td><td style="color:var(--muted)">ChatGPT</td><td style="color:var(--muted)">1 of 3</td><td style="color:var(--muted)">3rd</td><td style="color:var(--muted)">"Good for kids"</td><td style="color:var(--muted)">Two named competitors</td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h4>When you are done</h4>
+    <ul>
+      <li>Citation share = total times named ÷ total answers checked</li>
+      <li>Circle every question where a competitor appears and you do not. That is your Week 3 content list</li>
+      <li>Highlight every wrong fact about you. Fix those first, on your site and on your listings</li>
+    </ul>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="band ink cta">
+  <div class="wrap">
+    <div class="brand" style="margin-bottom:36px"><span class="mark" aria-hidden="true"></span>Appear</div>
+    <span class="eyebrow">Want this done for you?</span>
+    <h2 style="margin-top:10px">Get recommended in every AI answer.</h2>
+    <p class="lede" style="color:#cfd0d6">Appear is AI visibility infrastructure. We make your brand easy for ChatGPT, Perplexity, Claude, Gemini and Google AI to read, understand and cite.</p>
+    <ul>
+      <li><strong style="color:#fff">Readable to AI, unchanged for humans.</strong> Your existing site gets a clean, structured version for AI systems. Visitors see exactly what they see today</li>
+      <li><strong style="color:#fff">Answer ready content, written for you.</strong> FAQs, comparisons, structured facts and summaries built from your real business</li>
+      <li><strong style="color:#fff">Citation share tracking.</strong> See which questions you win across every major engine, and who gets named when you do not</li>
+      <li><strong style="color:#fff">No code, no plugins, no rebuild.</strong> Works with Webflow, Framer, WordPress, Shopify, Next.js and custom sites. Guided setup, most customers live the same day</li>
+    </ul>
+    <p>Find out what ChatGPT says about your business today. Get a free AI visibility audit.</p>
+    <a class="btn" href="https://joinappear.com/audit">Get your free audit at joinappear.com</a>
+  </div>
+</div>
+
+<!-- SOURCES -->
+<section class="page" id="sources">
+  <div class="wrap">
+    <span class="eyebrow">12 · Sources</span>
+    <h2 style="margin:10px 0 14px">Sources and methodology</h2>
+    <p>This report brings together public research on AI search, Appear's experience working with businesses on AI visibility, and Appear customer data. Third party figures are reported as published by their original authors, who used different methods and samples. Where studies disagree, we say so in the text. Figures are accurate to the best of our knowledge as of October 2026.</p>
+    <ol class="sources">
+      <li>OpenAI DevDay keynote, October 6, 2025. Sam Altman announces ChatGPT has 800 million weekly users. Reported by TechCrunch and others.</li>
+      <li>Alphabet Q2 2025 earnings call, July 2025. AI Overviews reach over 2 billion monthly users. <a href="https://abc.xyz/investor/">abc.xyz/investor</a></li>
+      <li>Gartner, "Gartner Predicts Search Engine Volume Will Drop 25% by 2026, Due to AI Chatbots and Other Virtual Agents", February 19, 2024. <a href="https://www.gartner.com/en/newsroom">gartner.com/en/newsroom</a></li>
+      <li>Pew Research Center, "Google users are less likely to click on links when an AI summary appears in the results", July 22, 2025. <a href="https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/">pewresearch.org</a></li>
+      <li>Aggarwal, P. et al., "GEO: Generative Engine Optimization", Proceedings of KDD 2024. <a href="https://arxiv.org/abs/2311.09735">arxiv.org/abs/2311.09735</a></li>
+      <li>Ahrefs, analysis of AI search visitors and signups on ahrefs.com, 2025. <a href="https://ahrefs.com/blog/">ahrefs.com/blog</a></li>
+      <li>Seer Interactive, conversion rates of AI assistant referrals versus Google organic, 2025. <a href="https://www.seerinteractive.com/insights">seerinteractive.com/insights</a></li>
+      <li>Adobe Digital Insights, "Traffic to US retail websites from generative AI sources jumps 1,200 percent", March 2025. <a href="https://blog.adobe.com/">blog.adobe.com</a></li>
+      <li>Vercel and MERJ, "The rise of the AI crawler", December 2024. <a href="https://vercel.com/blog/the-rise-of-the-ai-crawler">vercel.com/blog</a></li>
+      <li>Cloudflare, announcement of default blocking of AI crawlers, July 1, 2025. <a href="https://blog.cloudflare.com/">blog.cloudflare.com</a></li>
+      <li>Appear customer data and case studies, 2025 to 2026. <a href="https://joinappear.com">joinappear.com</a></li>
+      <li>Appear Help Center: how answer engines choose, AI citations, AI referral traffic and measurement. <a href="https://appear-ai.documentationai.com">appear-ai.documentationai.com</a></li>
+    </ol>
+
+    <h3 id="cite">How to cite this report</h3>
+    <p>You are welcome to quote findings, tables and charts from this report. Please use the citation below and link back.</p>
+    <div class="cite">Appear (2026). AI Search for Beginners: How ChatGPT became an acquisition channel. Appear Research Report, 2026 Edition. https://joinappear.com</div>
+    <p style="margin-top:24px;color:var(--muted);font-size:14px">© 2026 Appear. ChatGPT, Gemini, Perplexity, Claude, Copilot and Meta AI are trademarks of their respective owners. Appear is not affiliated with them.</p>
+  </div>
+</section>
