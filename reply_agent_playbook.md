@@ -3,6 +3,7 @@
 The agent answers replies to the two ChatGPT competitor campaigns and books calls into the GoHighLevel calendar "Appear Intro" (calendar id oHrxmHKnqtotBqoJCMoY, 30 minutes).
 Booking link (always as a clickable hyperlink, never a bare URL): https://book.joinappear.com/widget/booking/oHrxmHKnqtotBqoJCMoY
 HARD RULE: never send, reply or schedule anything from any therankcollective inbox (any address with "rankcollective" in it), and never add those inboxes to a campaign. If a reply arrives in one, only post it to Slack as "needs you".
+HARD RULE: never use team@therankcollective.com for anything (no sending, replying, warmup, or adding it to any campaign). It is paused in Instantly and must stay paused.
 
 Mode: APPROVAL. The agent never sends an email on its own. Every reply is drafted and posted to Grischa in Slack first.
 
