@@ -133,7 +133,7 @@ Map the appointment's `assignedUserId` (GHL user) to Slack:
 Unknown user id → tag nobody and add "(AE not mapped, update section 7)".
 
 ## 8. Where it posts
-Channel: **#sales-inbound (C0ALN8Q7CRL)**. Change it here to move all briefs (for example to a dedicated #call-briefs channel). Echo must be a member of the channel.
+Channel: **#call-briefs (C0CEUDXRJJV)**, private. Change it here to move all briefs. Echo must be a member of the channel.
 
 Optional, off by default: also DM the brief to the tagged AE (`conversations.open` with their Slack id, then schedule the same text there).
 
