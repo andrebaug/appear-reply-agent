@@ -150,8 +150,19 @@ Runs every hour, every day (calls happen early US mornings and UK afternoons). I
 Same as the reply agent: casual and upbeat only in the header line ("you're up 👊", "⚡ late booking"). Facts, form answers and website intel stay plain and neutral. Zero hyphens in Echo's own lines.
 
 ## 12. Keep opportunities in sync (every run)
-For every confirmed upcoming call seen in the run (same 80 minute window, plus any call booked in the last 2 hours anywhere in the next 14 days):
-1. Find the contact's open opportunity (`opportunities_search-opportunity` with `query_contact_id`).
-2. If its `assignedTo` is empty or differs from the appointment's `assignedUserId`, set it to that AE (`opportunities_update-opportunity`). Never assign to a deleted user (CX1Z3npm8biVG1CP165m, Kien, is deleted).
-3. If it is in TRC Pipeline (0leNrBHlVsTLOqdF7aCy) stage New Lead (7e076653-49c7-40a0-96b6-e16f730d6749), move it to Meeting booked (aa6b35ad-a2a2-411f-bf9d-0dc96cf8d3ec). Never move an opportunity backwards or out of any other stage, and never change status, value or name.
-4. No opportunity for the contact → post nothing, just mention it in the run summary.
+TRC Pipeline 0leNrBHlVsTLOqdF7aCy stage ids: New Lead 7e076653-49c7-40a0-96b6-e16f730d6749 · Meeting booked aa6b35ad-a2a2-411f-bf9d-0dc96cf8d3ec · No Show / Reschedule ef3d822f-17f9-4c50-b118-f856f9756756 · SQL ea616dbb-f1c7-4b4c-9efe-c50d426c1e52 · Proposal Sent 133b15fd-1ebb-48b3-b296-be28a9ddc767 · Contract Sent 8756febd-71cc-4dc1-82f6-6d8a27d82bd0 · Closed Won Subscription 87a9ae32-e4dc-4d92-9334-d30cb7c2afab · Closed Won One time 5dca7c98-ee53-4a88-9694-713cf494b79a · Closed Lost 3e1c4cfe-9802-49f4-bcae-90d96b49dcc3 · Nurture 36d7c40c-be59-4259-a8a2-816b77a8c9b5.
+
+Each run, pull events from every active sales calendar for **the last 3 days to 30 days ahead**, and act on every appointment whose `dateAdded` or `dateUpdated` is within the last 2 hours (new bookings, reschedules, no shows, cancellations). Group by contact and use the contact's newest appointment. Find the contact's open TRC opportunity (`opportunities_search-opportunity` with `query_contact_id`).
+
+**Stages (automatic only up to No Show; SQL and later are always set by the AE by hand):**
+- Appointment `confirmed` (new or rescheduled) and the opportunity is in New Lead, Nurture or No Show / Reschedule → **Meeting booked**.
+- Appointment `noshow` and the opportunity is in Meeting booked → **No Show / Reschedule**.
+- Appointment `cancelled`, the contact has no other upcoming confirmed appointment, and the opportunity is in Meeting booked → **No Show / Reschedule**.
+- Appointment `showed` → no stage change (the AE moves it to SQL or Closed Lost).
+- Never move an opportunity that is in SQL, Proposal Sent, Contract Sent, Closed Won or Closed Lost. Never change status, value or name.
+
+**Owner:** if the opportunity has no owner, or a deleted one (CX1Z3npm8biVG1CP165m Kien, Kwa8t37lSPfSFTVSFKuB), set it to the appointment's `assignedUserId`.
+
+**New leads with no booking** (opportunities created in the last 2 hours with no owner): assign by location from the contact phone. +1 or +5x (Americas) → Rocky 6B25exAKrXeB24Oopegi. Any other country code → Jordon hP9ECKuV0f8mqQ6oIjS8. No phone → alternate. Leave them in New Lead.
+
+No opportunity for a contact with a booking → mention it in the run summary only.
