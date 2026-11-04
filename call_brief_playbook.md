@@ -44,6 +44,7 @@ Before scheduling, check both:
 Then:
 - Same appointment id AND same start time already scheduled or posted → do nothing.
 - Same appointment id but a **different start time** (rescheduled) → `chat.deleteScheduledMessage` the old one, schedule a fresh brief.
+- A pending scheduled brief whose AE or Meet link changed since it was written (reassigning a call in GHL creates a new Meet link) → delete it and schedule a fresh one with the current AE and link.
 - A pending scheduled brief whose appointment is now cancelled, deleted, or no longer confirmed → `chat.deleteScheduledMessage` it and post nothing.
 
 ## 4. Where the data comes from
@@ -71,9 +72,14 @@ Show instant form questions with the question text cleaned up (for example `how_
 4. Run `python3 scripts/audit_facts.py <audit_link>` when the contact has an audit link. It reads the audit report and returns the questions buyers ask, how often AI mentions the lead, and the **competitors ChatGPT and Claude actually recommended**. This is the only source for competitors. If `verified` is false, or there is no audit, leave out the industry line and competitors and write "Audit couldn't verify the business, ask what they do". Never name competitors from memory or from a web search.
 5. **Industry line** (one line, max 12 words): what they sell, to whom, where. Build it only from the site's title, meta description and headings, plus the audit's `discovery_questions`. Example: "Spirits tasting glassware, sold direct and to the trade, US based". If the sources don't say it, drop the line.
 6. **Smart bullets** (max 3): the 3 strongest facts from the site, with proof they show (years, patents, awards, review counts, named press, pricing). Each ends with the page path in brackets, for example `[/about]`. Quote numbers exactly.
-7. **AI gap** (max 2 bullets): the sharpest objective facts. Pick from the audit numbers first (for example "Not in 8 of 12 buyer answers; Glencairn shows up in 9 of 12") and then from `ai_readiness` (AI crawlers blocked in robots.txt, no business schema, no FAQ, no llms.txt).
-8. **Opener**: one sentence the AE can say in the first minute, using one fact from above.
-9. Self check before sending: every word must trace back to the scan JSON, the audit JSON, GHL or the form. Delete anything that doesn't. Never guess revenue, headcount, owner names, ad spend or tech stack.
+7. **Revenue per customer** (one line, 💰). Use the first source that has it, and say which source:
+   1. GHL custom field `contact.average_revenue_per_customer` (FAzXYGzuX7CZVlDPivEc) or an instant form answer about it → "💰 Revenue per customer: <value> (they told us)".
+   2. Prices published on their site in the scan JSON → "💰 Published prices: <lowest> to <highest> [/page]". Quote prices exactly, and only for what they sell to their own customers.
+   3. Neither → "💰 Revenue per customer: not published, ask what a typical customer is worth to them".
+   Never estimate from industry averages, company size or guesswork. A wrong number makes the AE look bad.
+8. **AI gap** (max 2 bullets): the sharpest objective facts. Pick from the audit numbers first (for example "Not in 8 of 12 buyer answers; Glencairn shows up in 9 of 12") and then from `ai_readiness` (AI crawlers blocked in robots.txt, no business schema, no FAQ, no llms.txt).
+9. **Opener**: one sentence the AE can say in the first minute, using one fact from above.
+10. Self check before sending: every word must trace back to the scan JSON, the audit JSON, GHL or the form. Delete anything that doesn't. Never guess revenue, headcount, owner names, ad spend or tech stack.
 
 Never invent proof points about Appear either. Allowed Appear numbers: 40% more AI referred traffic within 90 days; AI search clicks convert about 14x higher than a normal Google click; most customers are live the same day.
 
@@ -87,6 +93,7 @@ Post as Echo (Slack Web API with curl, token injected automatically, never print
 
 📇 <phone> · <email> · <url|website> · <audit_link|Audit> · <meet link|Join>
 Came from: <campaign / form name>
+💰 <revenue per customer line>
 
 *They told us*
 • <Question>: <answer word for word>
