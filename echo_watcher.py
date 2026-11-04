@@ -68,8 +68,13 @@ def slack(method, params=None, body=None):
         return {"ok": False, "error": "bad_json"}
 
 
+SYSTEM_SUBTYPES = {"channel_join", "channel_leave", "channel_topic", "channel_purpose", "channel_name"}
+
+
 def is_human(m):
-    return not m.get("bot_id") and m.get("user") != ECHO_USER and "Sent using" not in m.get("text", "")
+    """A real teammate message: not a bot, not Echo, not a Slack system notice like 'has joined'."""
+    return (not m.get("bot_id") and m.get("user") != ECHO_USER and "Sent using" not in m.get("text", "")
+            and m.get("subtype") not in SYSTEM_SUBTYPES)
 
 
 def is_echo(m):
