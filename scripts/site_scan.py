@@ -23,7 +23,7 @@ AI_BOTS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User"
            "PerplexityBot", "Perplexity-User", "Google-Extended", "Applebot-Extended",
            "anthropic-ai", "Claude-Web", "Meta-ExternalAgent", "Bytespider", "CCBot"]
 # Pages that usually carry the facts an AE wants, best first.
-KEY_PAGE_HINTS = ["about", "service", "pricing", "price", "location", "team",
+KEY_PAGE_HINTS = ["about", "founder", "service", "pricing", "price", "location", "team",
                   "review", "testimonial", "case", "faq", "contact", "product", "menu"]
 
 
@@ -73,7 +73,9 @@ class PageParser(HTMLParser):
                 self.jsonld.append("".join(self._buf))
                 self._in = None
         elif tag == "title" and self._in == "title":
-            self.title = " ".join("".join(self._buf).split())
+            # Keep the first <title>; later ones are usually SVG icon labels.
+            if not self.title:
+                self.title = " ".join("".join(self._buf).split())
             self._in = None
         elif tag in ("h1", "h2", "h3") and self._in == tag:
             h = " ".join("".join(self._buf).split())
@@ -189,17 +191,19 @@ def main():
     for href in home.links:
         u = urllib.parse.urljoin(final, href.split("#")[0])
         pu = urllib.parse.urlparse(u)
-        if pu.netloc != base.netloc or not pu.path or pu.path == "/":
+        if pu.netloc.removeprefix("www.") != base.netloc.removeprefix("www.") or not pu.path or pu.path == "/":
             continue
-        if re.search(r"\.(pdf|jpg|jpeg|png|gif|webp|zip|mp4)$", pu.path, re.I):
+        if re.search(r"\.(pdf|jpg|jpeg|png|gif|webp|zip|mp4|css|js|xml|php)$", pu.path, re.I):
+            continue
+        if re.search(r"/(wp-json|wp-content|wp-includes|feed|cart|checkout|account|login|tag|author)(/|$)", pu.path, re.I):
             continue
         key = u.rstrip("/")
         if key in seen:
             continue
         seen.add(key)
         score = next((i for i, h in enumerate(KEY_PAGE_HINTS) if h in pu.path.lower()), None)
-        if score is not None:
-            candidates.append((score, u))
+        # Pages without a hint still count, ranked after the hinted ones.
+        candidates.append((len(KEY_PAGE_HINTS) if score is None else score, u))
     candidates.sort()
 
     pages_html = [(final, home)]

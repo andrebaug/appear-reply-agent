@@ -30,6 +30,7 @@ Scheduled tasks run once an hour, so the agent never waits for the exact minute.
 2. For each confirmed call in that window, build the brief now and hand it to Slack with `chat.scheduleMessage`, `post_at` = call start minus 10 minutes (Unix seconds).
 3. If call start minus 10 minutes is less than 2 minutes away (or already passed, for example a last minute booking), post right away with `chat.postMessage` and add "⚡ late booking" to the header.
 4. Never brief a call that already started.
+5. **Overlapping calls**: every call still gets its own brief at its own start minus 10 minutes. Before writing, compare each call against all confirmed calls (any calendar) that overlap it in time. Add one line under the header: "⚠️ Overlaps with <Name> at <time>". If both calls have the same AE, or one has no AE, make it "⚠️ Clash: <AE> also has <Name> at <time>, someone needs to take one" and tag <@U0AL3P0D3CK> too.
 
 The 80 minute window overlaps the next run on purpose, so nothing falls through the gap. Duplicates are prevented in section 3.
 
@@ -125,6 +126,7 @@ Map the appointment's `assignedUserId` (GHL user) to Slack:
 | aFACd6kMOqDrALHH0Gso | Grischa Bauguitte | U0AL3P0D3CK |
 
 Unknown user id → tag nobody and add "(AE not mapped, update section 7)".
+No `assignedUserId` on the appointment → tag <@U0AL3P0D3CK> and write "⚠️ No AE assigned, who's taking this?" as the second line.
 
 ## 8. Where it posts
 Channel: **#call-briefs (C0CEUDXRJJV)**, private. Change it here to move all briefs. Echo must be a member of the channel.
