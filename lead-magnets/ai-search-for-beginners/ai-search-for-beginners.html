@@ -2,24 +2,29 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a printed research report. Ink black cover and chapter openers, warm paper pages, Appear blue used only for data and the "you" in every answer. */
+/* Layout: an airy research report. Lavender and blue "sky over water" gradient on the cover and chapter openers, near white pages, black pill buttons and mono labels like the AppearAI site. */
 :root {
   color-scheme: light;
-  --ink: #0b0b0f;
-  --ink-2: #2a2a33;
-  --muted: #5d5f6b;
-  --rule: #e4e2dc;
-  --paper: #fffefa;
-  --paper-2: #f5f3ec;
-  --blue: #0066ff;
-  --blue-soft: #e6efff;
-  --on-ink: #f4f3ef;
-  --on-ink-muted: #9a9ba6;
-  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --ink: #101014;
+  --ink-2: #33343d;
+  --muted: #6a6b78;
+  --rule: #e6e3ef;
+  --paper: #fcfbff;
+  --paper-2: #f3f1f9;
+  --blue: #3a76d6;
+  --blue-soft: #edf2fc;
+  --lav: #b9aedb;
+  --on-sky: #ffffff;
+  --sky: radial-gradient(120% 70% at 15% 5%, #dccbe8 0%, rgba(220,203,232,0) 60%),
+         radial-gradient(90% 60% at 85% 25%, #c3cff0 0%, rgba(195,207,240,0) 60%),
+         radial-gradient(110% 70% at 25% 85%, #6f9bd6 0%, rgba(111,155,214,0) 60%),
+         radial-gradient(90% 60% at 90% 95%, #a99ad3 0%, rgba(169,154,211,0) 60%),
+         linear-gradient(165deg, #cbbfe2 0%, #9db8e2 45%, #7d9fd6 70%, #ad9fd8 100%);
+  --display: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
 * { box-sizing: border-box; }
 body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.65; margin: 0; -webkit-font-smoothing: antialiased; }
@@ -28,50 +33,55 @@ a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 .wrap { max-width: 760px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
 .band { width: 100%; }
-.band.ink { background: var(--ink); color: var(--on-ink); }
+.band.sky { background: var(--sky); color: var(--on-sky); position: relative; overflow: hidden; }
+.band.sky::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(172deg, rgba(255,255,255,0) 0 38px, rgba(255,255,255,0.10) 38px 52px, rgba(255,255,255,0) 52px 96px); filter: blur(10px); pointer-events: none; }
+.band.sky > .wrap { position: relative; }
 .band.tint { background: var(--paper-2); }
 
-h1, h2, h3, h4 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
-h2 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
-h3 { font-size: 24px; line-height: 1.25; margin-top: 44px; margin-bottom: 10px; }
+h1, h2, h3, h4 { font-family: var(--display); font-weight: 500; text-wrap: balance; margin: 0; letter-spacing: -0.035em; }
+h2 { font-size: clamp(32px, 5vw, 46px); line-height: 1.05; }
+h3 { font-size: 25px; line-height: 1.2; margin-top: 44px; margin-bottom: 10px; letter-spacing: -0.025em; }
 h4 { font-family: var(--body); font-weight: 600; font-size: 16px; margin-top: 26px; margin-bottom: 4px; letter-spacing: 0; }
 p { margin: 0 0 16px; }
 .lede { font-size: 19px; line-height: 1.6; color: var(--ink-2); }
-.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-.ink .eyebrow { color: var(--on-ink-muted); }
+.eyebrow { font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.02em; color: var(--muted); }
+.sky .eyebrow { color: rgba(255,255,255,0.9); }
 strong { font-weight: 600; }
 ul, ol { padding-left: 22px; margin: 0 0 18px; }
 li { margin-bottom: 6px; }
 li::marker { color: var(--muted); }
 
+/* Logo and pill nav */
+.brand { display: inline-flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 500; font-size: 25px; letter-spacing: -0.04em; color: var(--ink); }
+.brand svg { width: 28px; height: 32px; flex: none; }
+.pillnav { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: #fff; border-radius: 999px; padding: 10px 10px 10px 22px; box-shadow: 0 8px 30px rgba(60, 70, 140, 0.12); }
+.pillnav .tag { font-family: var(--mono); font-size: 13px; color: var(--ink); background: var(--ink); color: #fff; border-radius: 999px; padding: 10px 18px; }
+
 /* Cover */
-.cover { padding-block: 64px 56px; }
-.cover .wrap { display: grid; gap: 40px; }
-.brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-size: 26px; letter-spacing: -0.02em; }
-.brand .mark { width: 26px; height: 26px; border-radius: 50%; background: var(--blue); position: relative; flex: none; }
-.brand .mark::after { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: var(--ink); }
-.cover h1 { font-size: clamp(48px, 10vw, 92px); line-height: 0.98; font-weight: 300; letter-spacing: -0.03em; }
-.cover h1 em { font-style: italic; color: var(--blue); font-weight: 400; }
-.cover .sub { font-size: 20px; line-height: 1.5; color: var(--on-ink); max-width: 34ch; margin: 0; }
-.chat { border: 1px solid #2c2c36; border-radius: 14px; padding: 20px; display: grid; gap: 14px; max-width: 520px; background: #121218; }
-.chat .q { justify-self: end; background: #23232c; border-radius: 14px 14px 4px 14px; padding: 10px 14px; font-size: 15px; max-width: 85%; }
-.chat .a { font-size: 15px; color: #cfd0d6; }
+.cover { padding-block: 32px 48px; }
+.cover .wrap { display: grid; gap: 44px; max-width: 900px; }
+.cover .hero { display: grid; gap: 20px; text-align: center; justify-items: center; }
+.cover h1 { font-size: clamp(50px, 10vw, 96px); line-height: 0.98; letter-spacing: -0.05em; font-weight: 500; text-shadow: 0 2px 30px rgba(60, 70, 150, 0.18); }
+.cover .sub { font-family: var(--mono); font-size: 15.5px; line-height: 1.6; max-width: 46ch; margin: 0; color: #fff; }
+.chat { background: rgba(255,255,255,0.82); color: var(--ink); border: 1px solid rgba(255,255,255,0.9); border-radius: 22px; padding: 20px 22px; display: grid; gap: 14px; width: 100%; max-width: 520px; justify-self: center; box-shadow: 0 20px 50px rgba(50, 60, 140, 0.18); backdrop-filter: blur(8px); }
+.chat .q { justify-self: end; background: var(--ink); color: #fff; border-radius: 18px 18px 4px 18px; padding: 10px 15px; font-size: 15px; max-width: 85%; }
+.chat .a { font-size: 15px; color: var(--ink-2); }
 .chat .a ol { margin: 8px 0 0; padding-left: 20px; }
 .chat .a li { margin-bottom: 4px; }
-.chat .a .you { color: #fff; background: rgba(0, 102, 255, 0.28); border-radius: 4px; padding: 0 5px; font-weight: 500; }
-.chat .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--on-ink-muted); }
-.cover-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; border-top: 1px solid #2c2c36; padding-top: 18px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--on-ink-muted); }
+.chat .a .you { color: #fff; background: var(--blue); border-radius: 6px; padding: 1px 7px; font-weight: 500; }
+.chat .label { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.cover-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-family: var(--mono); font-size: 13px; color: #fff; }
 
 /* Sections */
 section.page { padding-block: 64px; }
-.opener { padding-block: 72px 56px; }
-.opener .num { font-family: var(--display); font-size: 120px; line-height: 0.9; font-weight: 300; color: var(--blue); letter-spacing: -0.04em; display: block; margin-bottom: 18px; }
-.opener h2 { font-size: clamp(36px, 6vw, 56px); margin-bottom: 18px; color: var(--on-ink); }
-.opener p { color: #cfd0d6; font-size: 18px; max-width: 46ch; margin: 0; }
+.opener { padding-block: 80px 60px; }
+.opener .num { font-family: var(--mono); font-size: 14px; display: inline-block; background: rgba(255,255,255,0.85); color: var(--ink); border-radius: 999px; padding: 6px 14px; margin-bottom: 22px; }
+.opener h2 { font-size: clamp(40px, 7vw, 68px); line-height: 1; letter-spacing: -0.05em; margin-bottom: 20px; color: #fff; text-shadow: 0 2px 30px rgba(50, 60, 150, 0.2); }
+.opener p { color: #fff; font-size: 18px; max-width: 46ch; margin: 0; text-shadow: 0 1px 14px rgba(40, 50, 120, 0.25); }
 
 /* Stat callouts */
-.stat { border-top: 2px solid var(--ink); padding-top: 16px; margin: 36px 0; display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 8px 28px; align-items: start; }
-.stat .big { font-family: var(--display); font-size: 58px; line-height: 1; letter-spacing: -0.03em; color: var(--blue); font-weight: 400; font-variant-numeric: tabular-nums; }
+.stat { border-top: 1px solid var(--rule); padding-top: 18px; margin: 36px 0; display: grid; grid-template-columns: minmax(0, 210px) minmax(0, 1fr); gap: 8px 28px; align-items: start; }
+.stat .big { font-family: var(--display); font-size: 60px; line-height: 1; letter-spacing: -0.05em; color: var(--blue); font-weight: 500; font-variant-numeric: tabular-nums; }
 .stat .what { font-size: 17px; line-height: 1.5; margin: 0; }
 .stat .src { grid-column: 2; font-family: var(--mono); font-size: 12px; color: var(--muted); }
 .stat .src::before { content: "Source: "; }
@@ -86,19 +96,20 @@ section.page { padding-block: 64px; }
 /* Tables */
 .table-wrap { overflow-x: auto; margin: 24px 0 28px; }
 table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.45; min-width: 520px; }
-th { text-align: left; font-family: var(--mono); font-weight: 500; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom: 1.5px solid var(--ink); padding: 8px 12px 8px 0; }
+th { text-align: left; font-family: var(--mono); font-weight: 500; font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--ink); padding: 8px 12px 8px 0; }
 td { border-bottom: 1px solid var(--rule); padding: 11px 12px 11px 0; vertical-align: top; }
 td:first-child { font-weight: 600; }
 .worksheet td { height: 40px; }
 .worksheet td:first-child { font-weight: 400; }
 
 /* Notes */
-.note { background: var(--blue-soft); border-radius: 10px; padding: 18px 20px; margin: 28px 0; font-size: 15.5px; }
+.note { background: var(--blue-soft); border-radius: 18px; padding: 18px 22px; margin: 28px 0; font-size: 15.5px; }
 .note p:last-child { margin: 0; }
 .note .eyebrow { color: var(--blue); display: block; margin-bottom: 6px; }
-.pull { font-family: var(--display); font-size: 28px; line-height: 1.3; font-weight: 300; margin: 40px 0; padding-left: 22px; border-left: 2px solid var(--blue); text-wrap: balance; }
+.note.lav { background: linear-gradient(120deg, #efeaf8, #e9f0fb); }
+.pull { font-family: var(--display); font-size: 30px; line-height: 1.2; font-weight: 500; letter-spacing: -0.035em; margin: 40px 0; padding-left: 22px; border-left: 2px solid var(--lav); text-wrap: balance; }
 code, .mono { font-family: var(--mono); font-size: 0.88em; }
-pre { font-family: var(--mono); font-size: 13px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; overflow-x: auto; line-height: 1.55; }
+pre { font-family: var(--mono); font-size: 13px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 16px; overflow-x: auto; line-height: 1.55; }
 
 /* Bar charts */
 .chart { margin: 28px 0 32px; }
@@ -106,29 +117,29 @@ pre { font-family: var(--mono); font-size: 13px; background: var(--paper-2); bor
 .chart .cap { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 10px; }
 .bars { display: grid; gap: 10px; margin-top: 14px; }
 .bar { display: grid; grid-template-columns: minmax(0, 132px) minmax(0, 1fr) 58px; gap: 12px; align-items: center; font-size: 14px; }
-.bar .track { height: 22px; background: var(--paper-2); border-radius: 3px; position: relative; }
-.bar .fill { position: absolute; inset: 0 auto 0 0; background: var(--ink); border-radius: 3px; }
-.bar.hi .fill { background: var(--blue); }
+.bar .track { height: 22px; background: var(--paper-2); border-radius: 999px; position: relative; overflow: hidden; }
+.bar .fill { position: absolute; inset: 0 auto 0 0; background: #b8b9c6; border-radius: 999px; }
+.bar.hi .fill { background: linear-gradient(90deg, #a99ad3, var(--blue)); }
 .bar .v { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
 
 /* Engine cards */
 .engines { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0; border-top: 1px solid var(--rule); margin: 24px 0; }
 .engines div { padding: 16px 16px 16px 0; border-bottom: 1px solid var(--rule); min-width: 0; }
-.engines b { display: block; font-family: var(--display); font-weight: 400; font-size: 20px; margin-bottom: 4px; }
+.engines b { display: block; font-family: var(--display); font-weight: 500; letter-spacing: -0.02em; font-size: 20px; margin-bottom: 4px; }
 .engines span { font-size: 14.5px; color: var(--ink-2); }
 
 /* Weeks */
-.week { border-top: 2px solid var(--ink); padding-top: 14px; margin-top: 40px; }
-.week .eyebrow { color: var(--blue); }
-.week h3 { margin-top: 6px; }
+.week { border-top: 1px solid var(--rule); padding-top: 16px; margin-top: 40px; }
+.week .eyebrow { display: block; width: fit-content; break-after: avoid; background: var(--ink); color: #fff; border-radius: 999px; padding: 4px 12px; }
+.week h3 { margin-top: 12px; }
 .check { list-style: none; padding: 0; }
 .check li { padding-left: 30px; position: relative; }
-.check li::before { content: ""; position: absolute; left: 0; top: 5px; width: 15px; height: 15px; border: 1.5px solid var(--ink); border-radius: 3px; }
+.check li::before { content: ""; position: absolute; left: 0; top: 5px; width: 15px; height: 15px; border: 1.5px solid var(--ink); border-radius: 5px; }
 
 /* Myths */
 .myth { padding: 18px 0; border-top: 1px solid var(--rule); }
-.myth .m { font-family: var(--display); font-size: 21px; line-height: 1.3; margin-bottom: 6px; }
-.myth .m::before { content: "Myth: "; font-style: italic; color: var(--muted); }
+.myth .m { font-family: var(--display); font-weight: 500; letter-spacing: -0.025em; font-size: 21px; line-height: 1.3; margin-bottom: 6px; }
+.myth .m::before { content: "Myth: "; color: var(--muted); font-weight: 400; }
 .myth p { margin: 0; color: var(--ink-2); }
 
 dl.gloss { margin: 24px 0; }
@@ -138,33 +149,33 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
 .toc { list-style: none; padding: 0; margin: 28px 0 0; }
 .toc li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; padding: 12px 0; border-top: 1px solid var(--rule); margin: 0; }
 .toc .n { font-family: var(--mono); font-size: 13px; color: var(--blue); padding-top: 4px; }
-.toc a { color: var(--ink); text-decoration: none; font-family: var(--display); font-size: 21px; }
+.toc a { color: var(--ink); text-decoration: none; font-family: var(--display); font-weight: 500; letter-spacing: -0.025em; font-size: 21px; }
 .toc a:hover { color: var(--blue); }
-.toc small { display: block; color: var(--muted); font-size: 14px; font-family: var(--body); }
+.toc small { display: block; color: var(--muted); font-size: 14px; font-family: var(--body); letter-spacing: 0; font-weight: 400; }
 
-.cta { padding-block: 72px; }
-.cta h2 { color: var(--on-ink); margin-bottom: 18px; }
-.cta p { color: #cfd0d6; }
-.btn { display: inline-block; background: var(--blue); color: #fff; text-decoration: none; padding: 14px 22px; border-radius: 8px; font-weight: 600; margin-top: 10px; }
-.btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-.cta ul { color: #cfd0d6; }
+.about { padding-block: 64px; }
+.about .card { background: rgba(255,255,255,0.86); color: var(--ink); border-radius: 28px; padding: 36px 34px; box-shadow: 0 20px 50px rgba(50, 60, 140, 0.16); }
+.about .card p { color: var(--ink-2); }
+.btn { display: inline-block; background: var(--ink); color: #fff; text-decoration: none; padding: 14px 24px; border-radius: 999px; font-family: var(--mono); font-size: 14.5px; margin-top: 8px; }
+.btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
 .sources { font-size: 14px; line-height: 1.55; padding-left: 22px; }
 .sources li { margin-bottom: 10px; }
-.cite { font-family: var(--mono); font-size: 13px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; line-height: 1.6; }
+.cite { font-family: var(--mono); font-size: 13px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px; padding: 14px 16px; line-height: 1.6; }
 
 @media (max-width: 560px) {
   .stat { grid-template-columns: minmax(0, 1fr); }
   .stat .src { grid-column: 1; }
   .stat .big { font-size: 48px; }
   .bar { grid-template-columns: minmax(0, 92px) minmax(0, 1fr) 50px; font-size: 13px; }
-  .opener .num { font-size: 88px; }
+  .pillnav { justify-content: center; padding: 10px 14px; }
+  .about .card { padding: 26px 22px; }
 }
 
 /* Print: US Letter report with full bleed cover and chapter openers */
 @page { size: Letter; margin: 0.7in 0.75in 0.8in;
-  @bottom-left { content: "Appear  ·  AI Search for Beginners"; font-family: "Geist Mono", monospace; font-size: 8pt; color: #8a8b95; }
-  @bottom-right { content: counter(page); font-family: "Geist Mono", monospace; font-size: 8pt; color: #8a8b95; }
+  @bottom-left { content: "AppearAI  ·  AI Search for Beginners"; font-family: "IBM Plex Mono", monospace; font-size: 8pt; color: #8a8b98; }
+  @bottom-right { content: counter(page); font-family: "IBM Plex Mono", monospace; font-size: 8pt; color: #8a8b98; }
 }
 @page full { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
 @media print {
@@ -172,14 +183,14 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
   h3 { margin-top: 30px; }
   .stat { margin: 24px 0; }
   .wrap { max-width: none; padding: 0; }
-  .cover, .opener, .cta { page: full; break-before: page; height: 11in; display: flex; flex-direction: column; justify-content: center; }
-  .cover { break-before: auto; justify-content: space-between; padding: 0.9in 0.85in; }
+  .cover, .opener, .about { page: full; break-before: page; height: 11in; display: flex; flex-direction: column; justify-content: center; }
+  .cover { break-before: auto; padding: 0.55in 0.7in 0.7in; }
   .cover .wrap { height: 100%; align-content: space-between; }
   .opener { justify-content: flex-end; padding: 0.9in 0.85in 1.1in; }
-  .cta { padding: 0.9in 0.85in; }
-  .opener .wrap, .cta .wrap { padding: 0; }
+  .about { padding: 0.9in 0.85in; }
+  .opener .wrap, .about .wrap, .cover .wrap { padding: 0; }
+  .chat { backdrop-filter: none; }
   section.page { padding-block: 0; break-before: page; }
-  .opener + section.page { break-before: page; }
   .band.tint { background: transparent; }
   h3 { break-after: avoid; }
   .stat, .chart, .note, .myth, .week h3, table, tr, .findings li, .engines div, .pull { break-inside: avoid; }
@@ -192,13 +203,13 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
 </style>
 
 <!-- COVER -->
-<header class="band ink cover">
+<header class="band sky cover">
   <div class="wrap">
-    <div class="brand"><span class="mark" aria-hidden="true"></span>Appear</div>
-    <div style="display:grid;gap:22px">
-      <span class="eyebrow">Appear Research Report · 2026 Edition</span>
-      <h1>AI Search for <em>Beginners</em></h1>
-      <p class="sub">How ChatGPT became an acquisition channel, and the exact playbook to get your business recommended in it.</p>
+    <nav class="pillnav" aria-label="Report"><div class="brand"><svg viewBox="0 0 28 32" aria-hidden="true"><defs><linearGradient id="LG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9dcfb"/><stop offset="1" stop-color="#4a86e0"/></linearGradient></defs><path d="M2 17a12 12 0 0 1 24 0z" fill="url(#LG)"/><rect x="2" y="19" width="24" height="3" rx="1.5" fill="#5b93e6"/><rect x="5" y="24" width="18" height="2.6" rx="1.3" fill="#7aa7ec"/><rect x="9" y="28.4" width="10" height="2.4" rx="1.2" fill="#9cbdf1"/></svg>AppearAI</div><span class="tag">Research Report · 2026</span></nav>
+    <div class="hero">
+      <span class="eyebrow">A beginner's guide to AI search</span>
+      <h1>AI Search<br>for Beginners</h1>
+      <p class="sub">How ChatGPT became an acquisition channel, and how to get your business recommended in it.</p>
     </div>
     <div class="chat" aria-label="Example of an AI assistant answer">
       <span class="label">A buyer asks ChatGPT</span>
@@ -206,12 +217,12 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
       <div class="a">Here are three options people rate highly:
         <ol>
           <li>Northside Co. &nbsp;(4.9 stars, 212 reviews)</li>
-          <li class="you-row"><span class="you">Your business</span> &nbsp;(if AI can read you)</li>
+          <li><span class="you">Your business</span> &nbsp;(if AI can read you)</li>
           <li>Riverbend Group &nbsp;(4.7 stars, 88 reviews)</li>
         </ol>
       </div>
     </div>
-    <div class="cover-foot"><span>joinappear.com</span><span>Free guide · 12 chapters · ~40 min read</span></div>
+    <div class="cover-foot"><span>joinappear.com</span><span>12 chapters · ~40 min read</span></div>
   </div>
 </header>
 
@@ -285,9 +296,9 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
 </section>
 
 <!-- CHAPTER 1 -->
-<div class="band ink opener" id="ch1">
+<div class="band sky opener" id="ch1">
   <div class="wrap">
-    <span class="num">01</span>
+    <span class="num">Chapter 01</span>
     <h2>The new front page</h2>
     <p>For twenty years the front page of the internet was ten blue links. Now, more and more often, it is a single paragraph written by an AI.</p>
   </div>
@@ -346,9 +357,9 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
 </section>
 
 <!-- CHAPTER 2 -->
-<div class="band ink opener" id="ch2">
+<div class="band sky opener" id="ch2">
   <div class="wrap">
-    <span class="num">02</span>
+    <span class="num">Chapter 02</span>
     <h2>How AI search works</h2>
     <p>You do not need to understand the technology. You do need to understand the two ways an AI builds its answer, because each one rewards different things.</p>
   </div>
@@ -400,9 +411,9 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
 </section>
 
 <!-- CHAPTER 3 -->
-<div class="band ink opener" id="ch3">
+<div class="band sky opener" id="ch3">
   <div class="wrap">
-    <span class="num">03</span>
+    <span class="num">Chapter 03</span>
     <h2>How AI picks who to recommend</h2>
     <p>No AI company publishes its full recipe. But across all the major engines, the pattern is consistent enough to act on.</p>
   </div>
@@ -428,6 +439,7 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
     <p>An AI cannot recommend what it cannot read. This sounds obvious, but it is where most businesses quietly fail.</p>
     <p>Many modern websites load their content with JavaScript, the code that makes pages interactive. Your browser runs that code and shows you a beautiful page. Many AI crawlers do not run it. They see a near empty page with a logo and a cookie banner. A 2024 analysis by Vercel and MERJ of billions of crawler requests found that the major AI crawlers, including OpenAI's and Anthropic's, did not render JavaScript at all.</p>
     <p>On top of that, many security tools now block AI crawlers by default. In July 2025, Cloudflare, which sits in front of a large share of the web, began blocking AI crawlers by default for new sites. Plenty of businesses are invisible to AI and have no idea, because their website looks perfectly fine to humans.</p>
+    <p>This is the most common problem we run into at Appear, and usually the quickest to fix. The answer is not a redesign. It is giving AI systems a clean, readable version of the same content, while human visitors keep seeing the site exactly as it is.</p>
 
     <h3>Relevance is judged question by question</h3>
     <p>There is no overall "AI score" for your company. Every question is judged on its own.</p>
@@ -469,9 +481,9 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
 </section>
 
 <!-- CHAPTER 4 -->
-<div class="band ink opener" id="ch4">
+<div class="band sky opener" id="ch4">
   <div class="wrap">
-    <span class="num">04</span>
+    <span class="num">Chapter 04</span>
     <h2>Is ChatGPT a real acquisition channel?</h2>
     <p>The short answer: the volume is small, the quality is high, and the biggest effect is the one your analytics cannot see.</p>
   </div>
@@ -502,7 +514,7 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
       <div class="cap">Source: Seer Interactive, 2025. Conversion rates measured on one client's website, so treat as directional.</div>
     </div>
 
-    <p>Adobe saw the same pattern in retail. Visitors arriving from AI sources stayed longer, viewed more pages and bounced less than visitors from other channels. And in Appear's own customer data, AI search clicks convert at roughly 14 times the rate of a typical Google click.</p>
+    <p>Adobe saw the same pattern in retail. Visitors arriving from AI sources stayed longer, viewed more pages and bounced less than visitors from other channels. In the data we see at Appear, AI search clicks convert at roughly 14 times the rate of a typical Google click.</p>
 
     <h3>Why AI visitors convert so well</h3>
     <p>Because the AI already did the comparison shopping.</p>
@@ -523,10 +535,9 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
     <p>A buyer asks ChatGPT for the best med spa nearby. Your name is in the answer. They do not click anything. They pick up the phone, or search your name on Google, or walk in on Saturday. Your analytics records a phone call, a branded search or a direct visit. Nothing says "AI".</p>
     <p>That is why judging AI search by referral traffic alone will always undersell it. The click is the smallest part of what happens.</p>
 
-    <div class="stat">
-      <div class="big">+40%</div>
-      <p class="what">Average increase in AI referred traffic that Appear customers see within 90 days, with most live on Appear the same day they start.</p>
-      <div class="src">Appear customer data</div>
+    <div class="note lav">
+      <span class="eyebrow">From our work at Appear</span>
+      <p>Across the brands we work with, AI referred traffic grows by around 40% on average within the first 90 days of making their sites readable to AI. The bigger change usually shows up first in sales calls, where more prospects say "ChatGPT recommended you".</p>
     </div>
 
     <h3>So, is it worth it?</h3>
@@ -535,9 +546,9 @@ dl.gloss dd { margin: 2px 0 0; color: var(--ink-2); }
 </section>
 
 <!-- CHAPTER 5 -->
-<div class="band ink opener" id="ch5">
+<div class="band sky opener" id="ch5">
   <div class="wrap">
-    <span class="num">05</span>
+    <span class="num">Chapter 05</span>
     <h2>Measuring AI visibility</h2>
     <p>If you measure AI search the way you measure Google, you will get the wrong answer. Here is what to track instead.</p>
   </div>
@@ -565,6 +576,7 @@ Example:
 You were named in 36 of them
 Citation share = 36 ÷ 240 = 15%</pre>
     <p>Do the same for your top three competitors and you have something far more useful than any traffic report: a picture of who owns the AI conversation in your category, and where the gaps are.</p>
+    <p>You can do this by hand with the worksheet at the back of this report. It takes an afternoon. Once you want to track it every week across every engine, a tool like Appear does the sampling for you.</p>
 
     <h3>What counts as a citation (and what does not)</h3>
     <div class="table-wrap">
@@ -606,9 +618,9 @@ Citation share = 36 ÷ 240 = 15%</pre>
 </section>
 
 <!-- CHAPTER 6 -->
-<div class="band ink opener" id="ch6">
+<div class="band sky opener" id="ch6">
   <div class="wrap">
-    <span class="num">06</span>
+    <span class="num">Chapter 06</span>
     <h2>GEO vs SEO</h2>
     <p>SEO gets you onto the list of sources. GEO gets you into the sentence.</p>
   </div>
@@ -655,9 +667,9 @@ Citation share = 36 ÷ 240 = 15%</pre>
 </section>
 
 <!-- CHAPTER 7 -->
-<div class="band ink opener" id="ch7">
+<div class="band sky opener" id="ch7">
   <div class="wrap">
-    <span class="num">07</span>
+    <span class="num">Chapter 07</span>
     <h2>The 30 day playbook</h2>
     <p>Four weeks, one focus per week. You can do all of this yourself. Each week builds on the last.</p>
   </div>
@@ -741,9 +753,9 @@ Citation share = 36 ÷ 240 = 15%</pre>
 </section>
 
 <!-- CHAPTER 8 -->
-<div class="band ink opener" id="ch8">
+<div class="band sky opener" id="ch8">
   <div class="wrap">
-    <span class="num">08</span>
+    <span class="num">Chapter 08</span>
     <h2>Playbooks by business type</h2>
     <p>The six signals apply to everyone. What changes is which questions matter and where your corroboration lives.</p>
   </div>
@@ -786,7 +798,7 @@ Citation share = 36 ÷ 240 = 15%</pre>
       <li>Buying guides that answer real questions, written for the use case not the keyword</li>
       <li>Reviews on your own site and on marketplaces, plus coverage in gift guides and roundups AI already cites</li>
     </ul>
-    <p>Appear customer Ultracker, a consumer app, had more than 40,000 product cards that AI crawlers could not read because they were loaded with JavaScript. Once those cards were made readable, AI search could finally see and cite the full catalogue. A Swiss luxury watch retailer got 11 premium watch brands indexed by AI with zero code changes to its site.</p>
+    <p>Ultracker, a consumer app we work with, had more than 40,000 product cards that AI crawlers could not read because they were loaded with JavaScript. Once those cards were made readable, AI search could finally see and cite the full catalogue. A Swiss luxury watch retailer got 11 premium watch brands indexed by AI with zero code changes to its site.</p>
 
     <h3>Agencies</h3>
     <p>If you run an SEO, marketing or web agency, AI visibility is both a new service line and a retention tool. Your clients are already asking "why doesn't ChatGPT mention us?" Agencies that can answer that question, measure it and fix it are winning new business on the strength of it.</p>
@@ -794,9 +806,9 @@ Citation share = 36 ÷ 240 = 15%</pre>
 </section>
 
 <!-- CHAPTER 9 -->
-<div class="band ink opener" id="ch9">
+<div class="band sky opener" id="ch9">
   <div class="wrap">
-    <span class="num">09</span>
+    <span class="num">Chapter 09</span>
     <h2>Nine myths to ignore</h2>
     <p>AI search is new enough that a lot of confident advice is simply wrong. Here is what to tune out.</p>
   </div>
@@ -816,9 +828,9 @@ Citation share = 36 ÷ 240 = 15%</pre>
 </section>
 
 <!-- CHAPTER 10 -->
-<div class="band ink opener" id="ch10">
+<div class="band sky opener" id="ch10">
   <div class="wrap">
-    <span class="num">10</span>
+    <span class="num">Chapter 10</span>
     <h2>Glossary</h2>
     <p>Every term in this report, explained in plain English.</p>
   </div>
@@ -879,21 +891,17 @@ Citation share = 36 ÷ 240 = 15%</pre>
   </div>
 </section>
 
-<!-- CTA -->
-<div class="band ink cta">
+<!-- ABOUT APPEAR -->
+<div class="band sky about">
   <div class="wrap">
-    <div class="brand" style="margin-bottom:36px"><span class="mark" aria-hidden="true"></span>Appear</div>
-    <span class="eyebrow">Want this done for you?</span>
-    <h2 style="margin-top:10px">Get recommended in every AI answer.</h2>
-    <p class="lede" style="color:#cfd0d6">Appear is AI visibility infrastructure. We make your brand easy for ChatGPT, Perplexity, Claude, Gemini and Google AI to read, understand and cite.</p>
-    <ul>
-      <li><strong style="color:#fff">Readable to AI, unchanged for humans.</strong> Your existing site gets a clean, structured version for AI systems. Visitors see exactly what they see today</li>
-      <li><strong style="color:#fff">Answer ready content, written for you.</strong> FAQs, comparisons, structured facts and summaries built from your real business</li>
-      <li><strong style="color:#fff">Citation share tracking.</strong> See which questions you win across every major engine, and who gets named when you do not</li>
-      <li><strong style="color:#fff">No code, no plugins, no rebuild.</strong> Works with Webflow, Framer, WordPress, Shopify, Next.js and custom sites. Guided setup, most customers live the same day</li>
-    </ul>
-    <p>Find out what ChatGPT says about your business today. Get a free AI visibility audit.</p>
-    <a class="btn" href="https://joinappear.com/audit">Get your free audit at joinappear.com</a>
+    <div class="card">
+      <div class="brand"><svg viewBox="0 0 28 32" aria-hidden="true"><defs><linearGradient id="LG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9dcfb"/><stop offset="1" stop-color="#4a86e0"/></linearGradient></defs><path d="M2 17a12 12 0 0 1 24 0z" fill="url(#LG)"/><rect x="2" y="19" width="24" height="3" rx="1.5" fill="#5b93e6"/><rect x="5" y="24" width="18" height="2.6" rx="1.3" fill="#7aa7ec"/><rect x="9" y="28.4" width="10" height="2.4" rx="1.2" fill="#9cbdf1"/></svg>AppearAI</div>
+      <h2 style="margin:26px 0 16px">About this report</h2>
+      <p>This report was put together by the team at Appear. We spend our days watching how ChatGPT, Perplexity, Claude, Gemini and Google AI describe businesses, and helping brands become easier for them to read, understand and cite.</p>
+      <p>A lot of what is in these pages comes from that work: the questions we see buyers ask, the reasons businesses get skipped, and the fixes that actually move the numbers.</p>
+      <p>If you would like to know where you stand today, we are happy to run the Week 1 benchmark for you. You will see which questions you show up for, who gets named when you do not, and what AI gets wrong about you. It is free and takes a couple of minutes to request.</p>
+      <a class="btn" href="https://joinappear.com/audit">Get your free AI visibility check</a>
+    </div>
   </div>
 </div>
 
