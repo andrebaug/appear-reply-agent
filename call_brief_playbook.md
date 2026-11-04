@@ -148,3 +148,10 @@ Runs every hour, every day (calls happen early US mornings and UK afternoons). I
 
 ## 11. Echo's voice
 Same as the reply agent: casual and upbeat only in the header line ("you're up 👊", "⚡ late booking"). Facts, form answers and website intel stay plain and neutral. Zero hyphens in Echo's own lines.
+
+## 12. Keep opportunities in sync (every run)
+For every confirmed upcoming call seen in the run (same 80 minute window, plus any call booked in the last 2 hours anywhere in the next 14 days):
+1. Find the contact's open opportunity (`opportunities_search-opportunity` with `query_contact_id`).
+2. If its `assignedTo` is empty or differs from the appointment's `assignedUserId`, set it to that AE (`opportunities_update-opportunity`). Never assign to a deleted user (CX1Z3npm8biVG1CP165m, Kien, is deleted).
+3. If it is in TRC Pipeline (0leNrBHlVsTLOqdF7aCy) stage New Lead (7e076653-49c7-40a0-96b6-e16f730d6749), move it to Meeting booked (aa6b35ad-a2a2-411f-bf9d-0dc96cf8d3ec). Never move an opportunity backwards or out of any other stage, and never change status, value or name.
+4. No opportunity for the contact → post nothing, just mention it in the run summary.
