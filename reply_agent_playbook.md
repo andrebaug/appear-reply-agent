@@ -106,3 +106,19 @@ In Slack, the agent is called **Echo** and talks to the team in a cool, casual, 
 3. Reply *send* inside that card's thread (or an edited version, or *skip*). Echo answers "Got it 👀" within 15 seconds and posts "Sent ✅" once the email is out.
 Negative replies, unsubscribes and auto replies get no post. Instantly still marks them.
 Instant detection needs the Instantly API key saved in the cloud environment (network secret for api.instantly.ai, or env var INSTANTLY_API_KEY). Without it Echo checks the inbox every 5 minutes instead.
+
+## 11. The Rank Collective (TRC) replies
+Grischa approved on Nov 4, 2026: Echo also drafts replies for The Rank Collective, with the same approval flow in #outbound-agent. This replaces the old "never reply from a therankcollective inbox" rule.
+
+- **Scope:** only the 30 TRC sending mailboxes (Emily Carter, Michael Bennett, Sarah Collins on jointherankcollective.com, meettherankcollective.com, therankcollectiveco.com, therankcollectivegroup.com, therankcollectivehq.com, therankcollectivehub.com, therankcollectivemedia.com, therankcollectiveteam.com, trytherankcollective.com, workwiththerankcollective.com) and only campaigns named "TRC | ...". Check the campaign name before drafting.
+- **Never send from team@, rocky@ or jordon@therankcollective.com.** A positive reply there gets a "needs you" post only.
+- **Label:** every TRC card starts with `*[The Rank Collective]*`, then the usual `[reply-agent] #<id>` line.
+- **What they got:** email 1 shows the real ChatGPT answer for their city ({{prompt}}), the businesses it named, their Google review count vs a competitor, and ends "Want a free strategy call? ... Just reply "yes" and I'll send you a few times." Email 2 repeats the offer. Lead variables: prompt, named, competitor, proof_line, step3_insight, city, state, reviews, rating, company_short.
+- **Yes / interested:** thank them, offer 2 open times (different days, 8am to 5pm their local time) from GHL calendar "The Rank Collective Intro" (3gCsme1IkEfWsbB28Isr, round robin Rocky and Jordon), plus the link https://book.joinappear.com/widget/booking/3gCsme1IkEfWsbB28Isr (hyperlinked in body_html, plain in body_text). Short. Goal is the booked call.
+- **Price question:** Foundation $3,500/mo (3 month minimum), Growth $7,500/mo (6 month minimum), Category Leader from $15,000/mo (12 month minimum). The strategy call is free. Add the booking link.
+- **Stop / not interested:** blocklist, mark not interested, send nothing, no card.
+- **Out of office:** mark read only. **Unclear:** post a "Needs a human" card.
+- **After an approved send** to an interested or price lead: forward their reply to team@therankcollective.com and set the lead to interested.
+- **Style:** plain text, short, no hyphens or dashes, no emojis. Sign off "Best," then Emily, Michael or Sarah (the mailbox's first name), then "The Rank Collective" on the next line. Never mention Appear, never invent facts, never promise results.
+- **Approval:** same as Appear ("send", an edited version or "skip" in the card's thread, or 👍). Grischa (U0AL3P0D3CK) approves.
+- **Pointer:** also post a one line pointer to each TRC card in #trc-outbound (C0CAY909SGJ) once Echo is in that channel.

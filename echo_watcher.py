@@ -38,6 +38,15 @@ INBOX_POLL = 30
 INBOX_WINDOW = 6 * 3600
 INSTANTLY = "https://api.instantly.ai/api/v2/emails"
 LOOKBACK = 3 * 24 * 3600
+# The Rank Collective: Echo drafts replies for these 30 mailboxes (Emily, Michael, Sarah on each
+# domain) in "TRC | ..." campaigns. Never from team@, rocky@ or jordon@therankcollective.com.
+TRC_DOMAINS = {
+    "jointherankcollective.com", "meettherankcollective.com", "therankcollectiveco.com",
+    "therankcollectivegroup.com", "therankcollectivehq.com", "therankcollectivehub.com",
+    "therankcollectivemedia.com", "therankcollectiveteam.com", "trytherankcollective.com",
+    "workwiththerankcollective.com",
+}
+TRC_LIVE = datetime.fromisoformat("2026-11-04T12:20:00+00:00").timestamp()
 DONE_REACTIONS = {"white_check_mark", "track_next", "black_right_pointing_double_triangle_with_vertical_bar"}
 APPROVE = re.compile(r"\b(send|sent it|yes|yep|ok|okay|go|approved?|ship it)\b|:\+1:|:thumbsup:|👍", re.I)
 SKIP = re.compile(r"\bskip\b", re.I)
@@ -163,6 +172,16 @@ def instantly_received():
         return []
 
 
+def inbox_brand(eaccount):
+    """appear, trc (one of the 30 TRC sending mailboxes) or trc_forbidden (team@/rocky@/jordon@)."""
+    domain = eaccount.lower().rpartition("@")[2]
+    if domain in TRC_DOMAINS:
+        return "trc"
+    if domain == "therankcollective.com":
+        return "trc_forbidden"
+    return "appear"
+
+
 def is_positive(e):
     if e.get("is_auto_reply") or re.match(r"(Accepted|Declined|Tentative|Invitation|Updated invitation):", e.get("subject", "")):
         return False
@@ -182,16 +201,19 @@ def check_inbox(channel_text, seen):
         seen.add(eid)
         sender = (e.get("from_address_json") or [{}])[0]
         who = sender.get("name") or e.get("from_address_email")
-        rank = "rankcollective" in e.get("eaccount", "")
-        note = ":rotating_light: *needs you*, came into a TRC inbox, I won't reply from it" if rank \
-            else "drafting the reply now :pencil2:"
+        brand = inbox_brand(e.get("eaccount", ""))
+        if brand == "trc" and created.timestamp() < TRC_LIVE:
+            continue  # the TRC session's own drafter handled replies from before Echo took over
+        note = ":rotating_light: *needs you*, came into team@/rocky@/jordon@, I never reply from those" \
+            if brand == "trc_forbidden" else "drafting the reply now :pencil2:"
+        label = "*[The Rank Collective]* " if brand != "appear" else ""
         slack("chat.postMessage", body={"channel": CHANNEL, "text":
-              f":fire: *Positive reply just landed* from {who} <mailto:{e.get('from_address_email')}|"
+              f"{label}:fire: *Positive reply just landed* from {who} <mailto:{e.get('from_address_email')}|"
               f"{e.get('from_address_email')}>: \"{e.get('content_preview', '')[:120].strip()}\" ({note})\n"
               f"[incoming] #{eid}"})
         return {"action": "new_positive", "email_id": eid, "eaccount": e.get("eaccount"),
                 "from": e.get("from_address_email"), "campaign_id": e.get("campaign_id"),
-                "subject": e.get("subject"), "rankcollective": rank}, True
+                "subject": e.get("subject"), "brand": brand}, True
     return None, True
 
 
