@@ -26,7 +26,7 @@ Only appointments with `appointmentStatus: confirmed` and `deleted: false` get a
 ## 2. Timing: how "10 minutes before" works
 Scheduled tasks run once an hour, so the agent never waits for the exact minute. Instead it uses Slack's own scheduler:
 
-1. Every run, pull events from all calendars in section 1 for the window **now to now + 80 minutes** (`calendars_get-calendar-events`, times in milliseconds).
+1. Every run, pull events from all calendars in section 1 for the window **now to now + 80 minutes** (`calendars_get-calendar-events`, times in milliseconds). GHL returns every event on the overlapping days, not just the window, so always filter on each event's own `startTime` yourself.
 2. For each confirmed call in that window, build the brief now and hand it to Slack with `chat.scheduleMessage`, `post_at` = call start minus 10 minutes (Unix seconds).
 3. If call start minus 10 minutes is less than 2 minutes away (or already passed, for example a last minute booking), post right away with `chat.postMessage` and add "⚡ late booking" to the header.
 4. Never brief a call that already started.
