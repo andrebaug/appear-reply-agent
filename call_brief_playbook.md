@@ -67,53 +67,47 @@ Show instant form questions with the question text cleaned up (for example `how_
 1. Run `python3 scripts/site_scan.py <website>` from the repo root. It fetches the homepage plus up to 5 key pages (about, services, pricing, locations, reviews, FAQ, contact) and checks robots.txt, llms.txt, sitemap and schema markup. Its JSON output is the **only** source for website facts.
 2. If `parked_domain` is true, say so plainly in the brief ("Their domain is parked, there's no live site"). That is a strong talking point by itself: AI tools have nothing to read. Skip the rest of the website section.
 3. If `readable` is false because the site is built with JavaScript, render the homepage once with the preinstalled Playwright Chromium (`require('playwright')`, `chromium.launch()`, `page.goto(url, {waitUntil: 'domcontentloaded'})`, `page.innerText('body')`) and use that text. If it still fails, write "Couldn't read the site, confirm the basics live on the call" and skip the website section.
-4. Write the intelligence in two clearly separated parts:
-   - **What the site says** (3 to 5 bullets): what they sell, who they serve, where, any proof they show (years in business, review counts, awards, named clients), pricing if published. Each bullet ends with the page path in brackets, for example `[/about]`. Quote numbers exactly as the site shows them.
-   - **AI visibility angles** (2 to 3 bullets): built only from the `ai_readiness` block. These are Appear's best openers because they are objective and checkable. Examples:
-     - `ai_crawlers_fully_blocked` lists GPTBot or ClaudeBot → "Their robots.txt blocks ChatGPT's crawler (GPTBot). ChatGPT literally can't read their site today."
-     - no LocalBusiness / Organization schema → "No business schema on the site, so AI tools have to guess their name, location and services."
-     - no FAQ section or FAQ schema → "No FAQ content, which is what AI answers pull from most."
-     - `llms_txt_found` false → "No llms.txt."
-5. Then **one** suggested opener (a single sentence the AE can say in the first 2 minutes) that uses one fact from above.
-6. Self check before sending: reread every bullet and confirm the fact is in the scan JSON, GHL, or the form answers. Delete anything that is not. Never guess revenue, headcount, owner names, ad spend or tech stack. Never say what ChatGPT says about them unless the audit field says it.
+4. Run `python3 scripts/audit_facts.py <audit_link>` when the contact has an audit link. It reads the audit report and returns the questions buyers ask, how often AI mentions the lead, and the **competitors ChatGPT and Claude actually recommended**. This is the only source for competitors. If `verified` is false, or there is no audit, leave out the industry line and competitors and write "Audit couldn't verify the business, ask what they do". Never name competitors from memory or from a web search.
+5. **Industry line** (one line, max 12 words): what they sell, to whom, where. Build it only from the site's title, meta description and headings, plus the audit's `discovery_questions`. Example: "Spirits tasting glassware, sold direct and to the trade, US based". If the sources don't say it, drop the line.
+6. **Smart bullets** (max 3): the 3 strongest facts from the site, with proof they show (years, patents, awards, review counts, named press, pricing). Each ends with the page path in brackets, for example `[/about]`. Quote numbers exactly.
+7. **AI gap** (max 2 bullets): the sharpest objective facts. Pick from the audit numbers first (for example "Not in 8 of 12 buyer answers; Glencairn shows up in 9 of 12") and then from `ai_readiness` (AI crawlers blocked in robots.txt, no business schema, no FAQ, no llms.txt).
+8. **Opener**: one sentence the AE can say in the first minute, using one fact from above.
+9. Self check before sending: every word must trace back to the scan JSON, the audit JSON, GHL or the form. Delete anything that doesn't. Never guess revenue, headcount, owner names, ad spend or tech stack.
 
 Never invent proof points about Appear either. Allowed Appear numbers: 40% more AI referred traffic within 90 days; AI search clicks convert about 14x higher than a normal Google click; most customers are live the same day.
 
 ## 6. Slack message format
-Post as Echo (Slack Web API with curl, token injected automatically, never print it). Slack formatting: *bold*, `<url|label>` links. Keep it scannable on a phone.
+Post as Echo (Slack Web API with curl, token injected automatically, never print it). Slack formatting: *bold*, `<url|label>` links. **Short: the whole brief must read in under 60 seconds on a phone.** One line per bullet, no paragraphs.
 
 ```
-📞 *Call in 10 min* with *<First Last>* from *<Company>* · <time in AE's time zone> (<time in lead's time zone> for them)
+📞 *Call in 10 min* · *<First Last>*, <Company> · <AE time> (<lead time> for them)
 <@AE_SLACK_ID> you're up 👊
+<Industry line>
 
-*Lead*
-• Name: <First Last><, Job title if known>
-• Mobile: <phone>   • Email: <email>
-• Website: <url|domain>
-• Audit: <audit_link|Open audit>   • AI visibility score: <geo_score or "not run yet">
-• Meet: <meet link|Join call>
-• Came from: <campaign / form name / source>
+📇 <phone> · <email> · <url|website> · <audit_link|Audit> · <meet link|Join>
+Came from: <campaign / form name>
 
-*What they told us (instant form)*
+*They told us*
 • <Question>: <answer word for word>
-• Booking notes: "<notes, if any>"
+• Notes: "<booking notes>"
 
-*Website intel* (scanned <n> pages just now)
+*Who they are*
 • <fact> [/page]
 • <fact> [/page]
 
-*AI visibility angles*
-• <angle>
-• <angle>
+*Who AI recommends instead*
+<Competitor 1> (<x of y> answers) · <Competitor 2> (<x of y>) · <Competitor 3> (<x of y>)
+They show up in <brand_listed_as_option> buyer answers.
 
-*Opener*
-"<one sentence>"
+*AI gap*
+• <gap>
+• <gap>
 
-<If the earlier email chain summary exists> *Earlier conversation*: <one line>
+💬 *Opener:* "<one sentence>"
 _brief:<appointmentId>:<startTime ISO>_
 ```
 
-If a field is empty, drop the line rather than writing "N/A", except Audit (write "no audit on file, run one before the call" so the AE knows).
+Drop any line whose data is missing instead of writing "N/A". Exceptions: no audit → write "No audit on file, run one before the call".
 
 ## 7. Who gets tagged
 Map the appointment's `assignedUserId` (GHL user) to Slack:
