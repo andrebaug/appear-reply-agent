@@ -163,6 +163,6 @@ Each run, pull events from every active sales calendar for **the last 3 days to 
 
 **Owner:** if the opportunity has no owner, or a deleted one (CX1Z3npm8biVG1CP165m Kien, Kwa8t37lSPfSFTVSFKuB), set it to the appointment's `assignedUserId`.
 
-**New leads with no booking** (opportunities created in the last 2 hours with no owner): assign by location from the contact phone. +1 or +5x (Americas) → Rocky 6B25exAKrXeB24Oopegi. Any other country code → Jordon hP9ECKuV0f8mqQ6oIjS8. No phone → alternate. Leave them in New Lead.
+**Any open deal with no owner** (check every run, no time limit, because Meta leads arrive from a workflow without an owner and a 2 hour window misses them): assign by location from the contact phone. +1 or +5x (Americas) → Rocky 6B25exAKrXeB24Oopegi. Any other country code → Jordon hP9ECKuV0f8mqQ6oIjS8. No phone → alternate. Leave them in New Lead.
 
 No opportunity for a contact with a booking → mention it in the run summary only.
