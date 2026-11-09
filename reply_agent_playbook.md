@@ -90,7 +90,7 @@ React ✅ on the card right away so the watcher ignores it. Bucket E and F get n
 - Nobody on the team already replied in that thread (check the inbox's sent emails for this lead).
 - Not from team@, rocky@ or jordon@therankcollective.com.
 
-**Needs you** (do not send, post a card with a suggested draft and tag Grischa and Kien): angry replies or legal threats; requests for a contract, proposal, discount or custom pricing; questions section 4 does not cover; a lead with no ChatGPT data saved (bucket A); anything where the reply is ambiguous. Card ends with: Reply in this thread "send", an edited version, or "skip". If nobody answers within 30 minutes, nudge once in the thread tagging them; again at 2 hours.
+**Needs you** (do not send, post a card with a suggested draft and tag Grischa only, <@U0AL3P0D3CK>; never tag or mention Kien, he is no longer on the team): angry replies or legal threats; requests for a contract, proposal, discount or custom pricing; questions section 4 does not cover; a lead with no ChatGPT data saved (bucket A); anything where the reply is ambiguous. Card ends with: Reply in this thread "send", an edited version, or "skip". If nobody answers within 30 minutes, nudge once in the thread tagging Grischa; again at 2 hours.
 
 **Corrections:** if a teammate replies in a log card's thread with instructions (for example "call him", "send the pricing too"), act on it and confirm in the thread.
 
