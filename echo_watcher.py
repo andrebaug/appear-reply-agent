@@ -37,6 +37,7 @@ INBOX_TICK = 5 * 60
 INBOX_POLL = 30
 INBOX_WINDOW = 6 * 3600
 INSTANTLY = "https://api.instantly.ai/api/v2/emails"
+SEEN_FILE = "/tmp/echo_seen_ids.txt"  # emails already announced, kept across watcher restarts
 LOOKBACK = 3 * 24 * 3600
 # The Rank Collective: Echo drafts replies for these 30 mailboxes (Emily, Michael, Sarah on each
 # domain) in "TRC | ..." campaigns. Never from team@, rocky@ or jordon@therankcollective.com.
@@ -210,6 +211,11 @@ def check_inbox(channel_text, seen):
         if eid in seen or eid in channel_text or created.timestamp() < cutoff or not is_positive(e):
             continue
         seen.add(eid)
+        try:
+            with open(SEEN_FILE, "a") as f:
+                f.write(eid + "\n")
+        except OSError:
+            pass
         sender = (e.get("from_address_json") or [{}])[0]
         who = sender.get("name") or e.get("from_address_email")
         brand = inbox_brand(e.get("eaccount", ""))
@@ -238,13 +244,19 @@ def main():
     start = time.time()
     api_ok = True
     last_inbox = 0.0
-    seen = set()
+    try:
+        seen = set(open(SEEN_FILE).read().split())
+    except OSError:
+        seen = set()
     while time.time() - start < MAX_RUNTIME:
         if not api_ok and business_hours() and time.time() - start >= INBOX_TICK:
             print("tick")
             return 3
         hist = slack("conversations.history", {"channel": CHANNEL, "limit": 200,
                                                "oldest": f"{time.time() - LOOKBACK:.0f}"})
+        if not hist.get("ok"):
+            time.sleep(POLL)  # Slack read failed: never act on an empty channel (it would repeat posts)
+            continue
         messages = hist.get("messages", [])
         if api_ok and time.time() - last_inbox >= INBOX_POLL:
             last_inbox = time.time()
