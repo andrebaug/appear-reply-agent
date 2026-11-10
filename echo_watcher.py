@@ -61,7 +61,10 @@ def slack(method, params=None, body=None):
     else:
         query = "&".join(f"{k}={v}" for k, v in (params or {}).items())
         cmd = ["curl", "-s", f"https://slack.com/api/{method}?{query}"]
-    out = subprocess.run(cmd, capture_output=True, text=True, timeout=30).stdout
+    try:
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=30).stdout
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "error": "timeout"}  # slow Slack call: skip this round, don't crash
     try:
         return json.loads(out)
     except ValueError:
@@ -167,7 +170,10 @@ def instantly_received():
     cmd = ["curl", "-s", "-w", "\n%{http_code}", f"{INSTANTLY}?email_type=received&limit=50"]
     if os.environ.get("INSTANTLY_API_KEY"):
         cmd += ["-H", f"Authorization: Bearer {os.environ['INSTANTLY_API_KEY']}"]
-    out = subprocess.run(cmd, capture_output=True, text=True, timeout=30).stdout
+    try:
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=30).stdout
+    except subprocess.TimeoutExpired:
+        return []  # slow Instantly call: try again next poll, keep instant mode on
     body, _, code = out.rpartition("\n")
     if code != "200":
         return None
